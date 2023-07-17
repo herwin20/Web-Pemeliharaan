@@ -48,6 +48,7 @@ class ReportController34 extends Controller
 
     public function store(Request $request)
     {
+        
         $rules = array(
             'week' => 'required',
             'nama_pekerjaan' => 'required',
@@ -61,6 +62,7 @@ class ReportController34 extends Controller
             'material',
             'rekomendasi',
             'status' => 'required',
+            'photo' => 'required|mimes:csv,txt,xlx,xls,pdf,jpg,jpeg,png|max:2048',
         );
 
         $error = Validator::make($request->all(), $rules);
@@ -82,7 +84,7 @@ class ReportController34 extends Controller
             'material' => $request->material,
             'rekomendasi' => $request->rekomendasi,
             'status' => $request->status,
-            'photo' => '',
+            'photo' => $request->file('photo'),
         );
 
         Report34Model::create($form_data);

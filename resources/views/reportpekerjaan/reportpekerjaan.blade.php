@@ -75,7 +75,7 @@
             data-bs-keyboard="false" data-bs-backdrop="static">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    <form method="post" id="history_form" class="form-horizontal">
+                    <form method="post" id="history_form" class="form-horizontal" enctype="multipart/form-data">
                         <div class="modal-header">
                             <h5 class="modal-title" id="ModalLabel">Add New Record</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -235,8 +235,7 @@
                                 <label class="form-label" for="basic-icon-default-phone">Upload</label>
                                 <div class="input-group input-group-merge">
                                     <div class="input-group">
-                                        <input type="file" name="photo" id="photo" class="form-control"
-                                            id="inputGroupFile02">
+                                        <input type="file" name="file" id="file" class="form-control">
                                         <label class="input-group-text" for="inputGroupFile02">Upload</label>
                                     </div>
                                 </div>

@@ -18,13 +18,13 @@
                 <div class="col-md-12">
                     <ul class="nav nav-pills flex-column flex-md-row mb-3">
                         <li class="nav-item">
-                            <a class="nav-link active" href="javascript:void(0);"><i class='bx bxs-buildings'></i> BLOK
+                            <a class="nav-link active" href="{{ asset('/pltgu') }}"><i class='bx bxs-buildings'></i> BLOK
                                 1-2</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="pages-account-settings-notifications.html"><i
-                                    class="bx bx-bell me-1"></i> Notifications</a>
-                        </li>
+                            <a class="nav-link" href={{ asset('/notification-pltgu') }}><i class="bx bx-bell me-1"></i>
+                                Notifications</a>
+                        </li><span class="badge text-danger">{{ $countnotification }}</span>
                         <li class="nav-item">
                             <a class="nav-link" href="pages-account-settings-connections.html"><i
                                     class="bx bx-link-alt me-1"></i> Connections</a>
@@ -129,6 +129,22 @@
                                 data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
                                     {!! $chart->container() !!}
+                                    <div class="container mt-3">
+                                        <div class="row text-center justify-content-evenly">
+                                            <div class="col-4">
+                                                <h6>Unbalanced Current GT11 (%)</h6>
+                                                <p id="unbalancecurrentGT11">-</p>
+                                            </div>
+                                            <div class="col-4">
+                                                <h6>Unbalanced Current GT12 (%)</h6>
+                                                <p id="unbalancecurrentGT12">-</p>
+                                            </div>
+                                            <div class="col-4">
+                                                <h6>Unbalanced Current GT13 (%)</h6>
+                                                <p id="unbalancecurrentGT13">-</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -143,6 +159,22 @@
                                 data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
                                     {!! $chart2->container() !!}
+                                    <div class="container mt-3">
+                                        <div class="row text-center justify-content-evenly">
+                                            <div class="col-4">
+                                                <h6>Unbalanced Voltage GT11 (%)</h6>
+                                                <p id="unbalancevoltGT11">-</p>
+                                            </div>
+                                            <div class="col-4">
+                                                <h6>Unbalanced Voltage GT12 (%)</h6>
+                                                <p id="unbalancevoltGT12">-</p>
+                                            </div>
+                                            <div class="col-4">
+                                                <h6>Unbalanced Voltage GT13 (%)</h6>
+                                                <p id="unbalancevoltGT13">-</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -184,6 +216,14 @@
                                 
                                 $('#hvcb').text(response.HVCBfix);
                                 $('#freq').text(response.freqfix);
+
+                                $('#unbalancevoltGT11').text(response.unbalancevoltGT11);
+                                $('#unbalancevoltGT12').text(response.unbalancevoltGT12);
+                                $('#unbalancevoltGT13').text(response.unbalancevoltGT13);
+
+                                $('#unbalancecurrentGT11').text(response.unbalancecurrentGT11);
+                                $('#unbalancecurrentGT12').text(response.unbalancecurrentGT12);
+                                $('#unbalancecurrentGT13').text(response.unbalancecurrentGT13);
                             },
                             error: function(err) {}
                         })

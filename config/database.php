@@ -113,6 +113,14 @@ return [
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
 
+        'oracle' => [
+            'driver' => 'oracle',
+            'tns'    => '(DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.3.205)(PORT = 1521)))(CONNECT_DATA = (SERVER = DEDICATED)(SID = ELLPRD)))',
+            'database' => 'ELLIPSE',
+            'username' => 'ellview',
+            'password' => 'PJBb3gr3@t',
+        ]
+
     ],
 
     /*

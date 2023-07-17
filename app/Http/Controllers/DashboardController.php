@@ -6,10 +6,12 @@ use App\Charts\DashboardChart1;
 use App\Models\Calendar;
 use Carbon\Carbon;
 use App\Models\WrenchTime;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Expr\Cast\Array_;
+use Throwable;
 
 class DashboardController extends Controller
 {
@@ -200,71 +202,83 @@ class DashboardController extends Controller
         }
         //return response()->json($kerjaan);
 
-        #Data MW
-        $gt11power = DB::connection('pgsql')->table('history')
-            ->selectRaw('value')
-            ->where('address_no', '=', '11MKA10CE902 XQ51')
-            ->orderBy('date_rec', 'desc')
-            ->limit(1)->pluck('value')[0];
-        $gt11powerfix = number_format((float)$gt11power, 2, '.', '');
+        try {
+            #Data MW
+            $gt11power = DB::connection('pgsql')->table('history')
+                ->selectRaw('value')
+                ->where('address_no', '=', '11MKA10CE902 XQ51')
+                ->orderBy('date_rec', 'desc')
+                ->limit(1)->pluck('value')[0];
+            $gt11powerfix = number_format((float)$gt11power, 2, '.', '');
 
-        $gt12power = DB::connection('pgsql')->table('history')
-            ->selectRaw('value')
-            ->where('address_no', '=', '12MKA10CE902 XQ51')
-            ->orderBy('date_rec', 'desc')
-            ->limit(1)->pluck('value')[0];
-        $gt12powerfix = number_format((float)$gt12power, 2, '.', '');
+            $gt12power = DB::connection('pgsql')->table('history')
+                ->selectRaw('value')
+                ->where('address_no', '=', '12MKA10CE902 XQ51')
+                ->orderBy('date_rec', 'desc')
+                ->limit(1)->pluck('value')[0];
+            $gt12powerfix = number_format((float)$gt12power, 2, '.', '');
 
-        $gt13power = DB::connection('pgsql')->table('history')
-            ->selectRaw('value')
-            ->where('address_no', '=', '13MKA10CE902 XQ51')
-            ->orderBy('date_rec', 'desc')
-            ->limit(1)->pluck('value')[0];
-        $gt13powerfix = number_format((float)$gt13power, 2, '.', '');
+            $gt13power = DB::connection('pgsql')->table('history')
+                ->selectRaw('value')
+                ->where('address_no', '=', '13MKA10CE902 XQ51')
+                ->orderBy('date_rec', 'desc')
+                ->limit(1)->pluck('value')[0];
+            $gt13powerfix = number_format((float)$gt13power, 2, '.', '');
 
-        $st14power = DB::connection('pgsql')->table('history')
-            ->selectRaw('value')
-            ->where('address_no', '=', '14MKA10CE609 XQ50')
-            ->orderBy('date_rec', 'desc')
-            ->limit(1)->pluck('value')[0];
-        $st14powerfix = number_format((float)$st14power, 2, '.', '');
+            $st14power = DB::connection('pgsql')->table('history')
+                ->selectRaw('value')
+                ->where('address_no', '=', '14MKA10CE609 XQ50')
+                ->orderBy('date_rec', 'desc')
+                ->limit(1)->pluck('value')[0];
+            $st14powerfix = number_format((float)$st14power, 2, '.', '');
 
-        $gt21power = DB::connection('pgsql')->table('history')
-            ->selectRaw('value')
-            ->where('address_no', '=', '21MKA10CE609_XQ50')
-            ->orderBy('date_rec', 'desc')
-            ->limit(1)->pluck('value')[0];
-        $gt21powerfix = number_format((float)$gt21power, 2, '.', '');
+            $gt21power = DB::connection('pgsql')->table('history')
+                ->selectRaw('value')
+                ->where('address_no', '=', '21MKA10CE609_XQ50')
+                ->orderBy('date_rec', 'desc')
+                ->limit(1)->pluck('value')[0];
+            $gt21powerfix = number_format((float)$gt21power, 2, '.', '');
 
-        $gt22power = DB::connection('pgsql')->table('history')
-            ->selectRaw('value')
-            ->where('address_no', '=', '22MKA10CE609_XQ50')
-            ->orderBy('date_rec', 'desc')
-            ->limit(1)->pluck('value')[0];
-        $gt22powerfix = number_format((float)$gt22power, 2, '.', '');
+            $gt22power = DB::connection('pgsql')->table('history')
+                ->selectRaw('value')
+                ->where('address_no', '=', '22MKA10CE609_XQ50')
+                ->orderBy('date_rec', 'desc')
+                ->limit(1)->pluck('value')[0];
+            $gt22powerfix = number_format((float)$gt22power, 2, '.', '');
 
-        if ($request->ajax()) {
-            return response()->json(
-                [
-                    'gt11power' => $gt11powerfix,
-                    'gt12power' => $gt12powerfix,
-                    'gt13power' => $gt13powerfix,
-                    'st14power' => $st14powerfix,
-                    'gt21power' => $gt21powerfix,
-                    'gt22power' => $gt22powerfix,
-                ]
-            );
+            $error = '';
+
+            if ($request->ajax()) {
+                return response()->json(
+                    [
+                        'gt11power' => $gt11powerfix,
+                        'gt12power' => $gt12powerfix,
+                        'gt13power' => $gt13powerfix,
+                        'st14power' => $st14powerfix,
+                        'gt21power' => $gt21powerfix,
+                        'gt22power' => $gt22powerfix,
+                    ]
+                );
+            }
+        } catch(\Illuminate\Database\QueryException $ex) {
+           $error = 'I-Core Server Error';
+           $gt11powerfix = 0;
+           $gt12powerfix = 0;
+           $gt13powerfix = 0;
+           $st14powerfix = 0;
+           $gt21powerfix = 0;
+           $gt22powerfix = 0;
         }
 
-        #21MKA10CE609_XQ50
-        #22MKA10CE609_XQ50
+        #21MKA10CE609_XQ50,
+        #22MKA10CE609_XQ50,
 
         return view('dashboard', [
             'pmcompliancefix' => $pmcompliancefix,
             'reactiveworkfix' => $reactiveworkfix,
             'reworkfix' => $reworkfix,
             'wrenchtimefix' => $wrenchtimefix,
-
+            'error' => $error,
             'pmcompliancefix3' => $pmcompliancefix3,
             'reactiveworkfix3' => $reactiveworkfix3,
             'reworkfix3' => $reworkfix3,

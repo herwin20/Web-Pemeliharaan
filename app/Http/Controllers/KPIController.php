@@ -29,18 +29,18 @@ class KPIController extends Controller
         $thisyear = Carbon::now()->format('Y');
         $notcomply = Carbon::now()->subMonth(1)->format('Y-m-d');
         $notcomplydate = Carbon::now()->setMonth(1)->format('Y-m-d');
-        $jan = Carbon::now()->setMonth(1)->format('Y-m');
-        $feb = Carbon::now()->setMonth(2)->format('Y-m');
-        $mar = Carbon::now()->setMonth(3)->format('Y-m');
-        $apr = Carbon::now()->setMonth(4)->format('Y-m');
-        $may = Carbon::now()->setMonth(5)->format('Y-m');
-        $jun = Carbon::now()->setMonth(6)->format('Y-m');
-        $jul = Carbon::now()->setMonth(7)->format('Y-m');
-        $aug = Carbon::now()->setMonth(8)->format('Y-m');
-        $sep = Carbon::now()->setMonth(9)->format('Y-m');
-        $oct = Carbon::now()->setMonth(10)->format('Y-m');
-        $nov = Carbon::now()->setMonth(11)->format('Y-m');
-        $des = Carbon::now()->setMonth(12)->format('Y-m');
+        $jan = $thisyear.'-01';
+        $feb = $thisyear.'-02';
+        $mar = $thisyear.'-03';
+        $apr = $thisyear.'-04';
+        $may = $thisyear.'-05';
+        $jun = $thisyear.'-06';
+        $jul = $thisyear.'-07';
+        $aug = $thisyear.'-08';
+        $sep = $thisyear.'-09';
+        $oct = $thisyear.'-10';
+        $nov = $thisyear.'-11';
+        $des = $thisyear.'-12';
 
         $year1 = Carbon::now()->subYears(7)->format('Y');
         $year2 = Carbon::now()->subYears(6)->format('Y');
@@ -1233,18 +1233,18 @@ class KPIController extends Controller
     public function ReactiveWork(Request $request)
     {
         $thisyear = Carbon::now()->format('Y');
-        $jan = Carbon::now()->setMonth(1)->format('Y-m');
-        $feb = Carbon::now()->setMonth(2)->format('Y-m');
-        $mar = Carbon::now()->setMonth(3)->format('Y-m');
-        $apr = Carbon::now()->setMonth(4)->format('Y-m');
-        $may = Carbon::now()->setMonth(5)->format('Y-m');
-        $jun = Carbon::now()->setMonth(6)->format('Y-m');
-        $jul = Carbon::now()->setMonth(7)->format('Y-m');
-        $aug = Carbon::now()->setMonth(8)->format('Y-m');
-        $sep = Carbon::now()->setMonth(9)->format('Y-m');
-        $oct = Carbon::now()->setMonth(10)->format('Y-m');
-        $nov = Carbon::now()->setMonth(11)->format('Y-m');
-        $des = Carbon::now()->setMonth(12)->format('Y-m');
+        $jan = $thisyear.'-01';
+        $feb = $thisyear.'-02';
+        $mar = $thisyear.'-03';
+        $apr = $thisyear.'-04';
+        $may = $thisyear.'-05';
+        $jun = $thisyear.'-06';
+        $jul = $thisyear.'-07';
+        $aug = $thisyear.'-08';
+        $sep = $thisyear.'-09';
+        $oct = $thisyear.'-10';
+        $nov = $thisyear.'-11';
+        $des = $thisyear.'-12';
 
         $option = 'TELECT';
         $namaunit = 'Listrik 1-2';
@@ -2846,18 +2846,18 @@ class KPIController extends Controller
     public function Rework()
     {
         $thisyear = Carbon::now()->format('Y');
-        $jan = Carbon::now()->setMonth(1)->format('Y-m');
-        $feb = Carbon::now()->setMonth(2)->format('Y-m');
-        $mar = Carbon::now()->setMonth(3)->format('Y-m');
-        $apr = Carbon::now()->setMonth(4)->format('Y-m');
-        $may = Carbon::now()->setMonth(5)->format('Y-m');
-        $jun = Carbon::now()->setMonth(6)->format('Y-m');
-        $jul = Carbon::now()->setMonth(7)->format('Y-m');
-        $aug = Carbon::now()->setMonth(8)->format('Y-m');
-        $sep = Carbon::now()->setMonth(9)->format('Y-m');
-        $oct = Carbon::now()->setMonth(10)->format('Y-m');
-        $nov = Carbon::now()->setMonth(11)->format('Y-m');
-        $des = Carbon::now()->setMonth(12)->format('Y-m');
+        $jan = $thisyear.'-01';
+        $feb = $thisyear.'-02';
+        $mar = $thisyear.'-03';
+        $apr = $thisyear.'-04';
+        $may = $thisyear.'-05';
+        $jun = $thisyear.'-06';
+        $jul = $thisyear.'-07';
+        $aug = $thisyear.'-08';
+        $sep = $thisyear.'-09';
+        $oct = $thisyear.'-10';
+        $nov = $thisyear.'-11';
+        $des = $thisyear.'-12';
 
         $jumlahreworktahun = DB::table('msf620')
             ->select('equip_no', DB::raw('COUNT(equip_no)'))
@@ -3395,18 +3395,18 @@ class KPIController extends Controller
     public function PMCompliance34()
     {
         $thisyear = Carbon::now()->format('Y');
-        $jan = Carbon::now()->setMonth(1)->format('Y-m');
-        $feb = Carbon::now()->setMonth(2)->format('Y-m');
-        $mar = Carbon::now()->setMonth(3)->format('Y-m');
-        $apr = Carbon::now()->setMonth(4)->format('Y-m');
-        $may = Carbon::now()->setMonth(5)->format('Y-m');
-        $jun = Carbon::now()->setMonth(6)->format('Y-m');
-        $jul = Carbon::now()->setMonth(7)->format('Y-m');
-        $aug = Carbon::now()->setMonth(8)->format('Y-m');
-        $sep = Carbon::now()->setMonth(9)->format('Y-m');
-        $oct = Carbon::now()->setMonth(10)->format('Y-m');
-        $nov = Carbon::now()->setMonth(11)->format('Y-m');
-        $des = Carbon::now()->setMonth(12)->format('Y-m');
+        $jan = $thisyear.'-01';
+        $feb = $thisyear.'-02';
+        $mar = $thisyear.'-03';
+        $apr = $thisyear.'-04';
+        $may = $thisyear.'-05';
+        $jun = $thisyear.'-06';
+        $jul = $thisyear.'-07';
+        $aug = $thisyear.'-08';
+        $sep = $thisyear.'-09';
+        $oct = $thisyear.'-10';
+        $nov = $thisyear.'-11';
+        $des = $thisyear.'-12';
 
         $year1 = Carbon::now()->subYears(7)->format('Y');
         $year2 = Carbon::now()->subYears(6)->format('Y');
@@ -3948,18 +3948,18 @@ class KPIController extends Controller
     public function PMCompliance5()
     {
         $thisyear = Carbon::now()->format('Y');
-        $jan = Carbon::now()->setMonth(1)->format('Y-m');
-        $feb = Carbon::now()->setMonth(2)->format('Y-m');
-        $mar = Carbon::now()->setMonth(3)->format('Y-m');
-        $apr = Carbon::now()->setMonth(4)->format('Y-m');
-        $may = Carbon::now()->setMonth(5)->format('Y-m');
-        $jun = Carbon::now()->setMonth(6)->format('Y-m');
-        $jul = Carbon::now()->setMonth(7)->format('Y-m');
-        $aug = Carbon::now()->setMonth(8)->format('Y-m');
-        $sep = Carbon::now()->setMonth(9)->format('Y-m');
-        $oct = Carbon::now()->setMonth(10)->format('Y-m');
-        $nov = Carbon::now()->setMonth(11)->format('Y-m');
-        $des = Carbon::now()->setMonth(12)->format('Y-m');
+        $jan = $thisyear.'-01';
+        $feb = $thisyear.'-02';
+        $mar = $thisyear.'-03';
+        $apr = $thisyear.'-04';
+        $may = $thisyear.'-05';
+        $jun = $thisyear.'-06';
+        $jul = $thisyear.'-07';
+        $aug = $thisyear.'-08';
+        $sep = $thisyear.'-09';
+        $oct = $thisyear.'-10';
+        $nov = $thisyear.'-11';
+        $des = $thisyear.'-12';
 
         $year1 = Carbon::now()->subYears(7)->format('Y');
         $year2 = Carbon::now()->subYears(6)->format('Y');
@@ -4501,18 +4501,18 @@ class KPIController extends Controller
     public function ReactiveWork34()
     {
         $thisyear = Carbon::now()->format('Y');
-        $jan = Carbon::now()->setMonth(1)->format('Y-m');
-        $feb = Carbon::now()->setMonth(2)->format('Y-m');
-        $mar = Carbon::now()->setMonth(3)->format('Y-m');
-        $apr = Carbon::now()->setMonth(4)->format('Y-m');
-        $may = Carbon::now()->setMonth(5)->format('Y-m');
-        $jun = Carbon::now()->setMonth(6)->format('Y-m');
-        $jul = Carbon::now()->setMonth(7)->format('Y-m');
-        $aug = Carbon::now()->setMonth(8)->format('Y-m');
-        $sep = Carbon::now()->setMonth(9)->format('Y-m');
-        $oct = Carbon::now()->setMonth(10)->format('Y-m');
-        $nov = Carbon::now()->setMonth(11)->format('Y-m');
-        $des = Carbon::now()->setMonth(12)->format('Y-m');
+        $jan = $thisyear.'-01';
+        $feb = $thisyear.'-02';
+        $mar = $thisyear.'-03';
+        $apr = $thisyear.'-04';
+        $may = $thisyear.'-05';
+        $jun = $thisyear.'-06';
+        $jul = $thisyear.'-07';
+        $aug = $thisyear.'-08';
+        $sep = $thisyear.'-09';
+        $oct = $thisyear.'-10';
+        $nov = $thisyear.'-11';
+        $des = $thisyear.'-12';
 
         $jumlahwocryear = DB::table('msf620')
             ->where([
@@ -5026,18 +5026,18 @@ class KPIController extends Controller
     public function ReactiveWork5()
     {
         $thisyear = Carbon::now()->format('Y');
-        $jan = Carbon::now()->setMonth(1)->format('Y-m');
-        $feb = Carbon::now()->setMonth(2)->format('Y-m');
-        $mar = Carbon::now()->setMonth(3)->format('Y-m');
-        $apr = Carbon::now()->setMonth(4)->format('Y-m');
-        $may = Carbon::now()->setMonth(5)->format('Y-m');
-        $jun = Carbon::now()->setMonth(6)->format('Y-m');
-        $jul = Carbon::now()->setMonth(7)->format('Y-m');
-        $aug = Carbon::now()->setMonth(8)->format('Y-m');
-        $sep = Carbon::now()->setMonth(9)->format('Y-m');
-        $oct = Carbon::now()->setMonth(10)->format('Y-m');
-        $nov = Carbon::now()->setMonth(11)->format('Y-m');
-        $des = Carbon::now()->setMonth(12)->format('Y-m');
+        $jan = $thisyear.'-01';
+        $feb = $thisyear.'-02';
+        $mar = $thisyear.'-03';
+        $apr = $thisyear.'-04';
+        $may = $thisyear.'-05';
+        $jun = $thisyear.'-06';
+        $jul = $thisyear.'-07';
+        $aug = $thisyear.'-08';
+        $sep = $thisyear.'-09';
+        $oct = $thisyear.'-10';
+        $nov = $thisyear.'-11';
+        $des = $thisyear.'-12';
 
         $jumlahwocryear = DB::table('msf620')
             ->where([
@@ -5570,18 +5570,18 @@ class KPIController extends Controller
     public function Rework34()
     {
         $thisyear = Carbon::now()->format('Y');
-        $jan = Carbon::now()->setMonth(1)->format('Y-m');
-        $feb = Carbon::now()->setMonth(2)->format('Y-m');
-        $mar = Carbon::now()->setMonth(3)->format('Y-m');
-        $apr = Carbon::now()->setMonth(4)->format('Y-m');
-        $may = Carbon::now()->setMonth(5)->format('Y-m');
-        $jun = Carbon::now()->setMonth(6)->format('Y-m');
-        $jul = Carbon::now()->setMonth(7)->format('Y-m');
-        $aug = Carbon::now()->setMonth(8)->format('Y-m');
-        $sep = Carbon::now()->setMonth(9)->format('Y-m');
-        $oct = Carbon::now()->setMonth(10)->format('Y-m');
-        $nov = Carbon::now()->setMonth(11)->format('Y-m');
-        $des = Carbon::now()->setMonth(12)->format('Y-m');
+        $jan = $thisyear.'-01';
+        $feb = $thisyear.'-02';
+        $mar = $thisyear.'-03';
+        $apr = $thisyear.'-04';
+        $may = $thisyear.'-05';
+        $jun = $thisyear.'-06';
+        $jul = $thisyear.'-07';
+        $aug = $thisyear.'-08';
+        $sep = $thisyear.'-09';
+        $oct = $thisyear.'-10';
+        $nov = $thisyear.'-11';
+        $des = $thisyear.'-12';
 
         $jumlahreworktahun = DB::table('msf620')
             ->select('equip_no', DB::raw('COUNT(equip_no)'))
@@ -6119,18 +6119,18 @@ class KPIController extends Controller
     public function Rework5()
     {
         $thisyear = Carbon::now()->format('Y');
-        $jan = Carbon::now()->setMonth(1)->format('Y-m');
-        $feb = Carbon::now()->setMonth(2)->format('Y-m');
-        $mar = Carbon::now()->setMonth(3)->format('Y-m');
-        $apr = Carbon::now()->setMonth(4)->format('Y-m');
-        $may = Carbon::now()->setMonth(5)->format('Y-m');
-        $jun = Carbon::now()->setMonth(6)->format('Y-m');
-        $jul = Carbon::now()->setMonth(7)->format('Y-m');
-        $aug = Carbon::now()->setMonth(8)->format('Y-m');
-        $sep = Carbon::now()->setMonth(9)->format('Y-m');
-        $oct = Carbon::now()->setMonth(10)->format('Y-m');
-        $nov = Carbon::now()->setMonth(11)->format('Y-m');
-        $des = Carbon::now()->setMonth(12)->format('Y-m');
+        $jan = $thisyear.'-01';
+        $feb = $thisyear.'-02';
+        $mar = $thisyear.'-03';
+        $apr = $thisyear.'-04';
+        $may = $thisyear.'-05';
+        $jun = $thisyear.'-06';
+        $jul = $thisyear.'-07';
+        $aug = $thisyear.'-08';
+        $sep = $thisyear.'-09';
+        $oct = $thisyear.'-10';
+        $nov = $thisyear.'-11';
+        $des = $thisyear.'-12';
 
         $jumlahreworktahun = DB::table('msf620')
             ->select('equip_no', DB::raw('COUNT(equip_no)'))

@@ -11,6 +11,7 @@ use App\Charts\CoolerFan as ChartsCoolerFan;
 use App\Models\CoolerFan;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\CoolerFanImport;
+use App\Models\AnomalyModel;
 
 class AnalisysController extends Controller
 {
@@ -387,12 +388,39 @@ class AnalisysController extends Controller
             ->limit(1)->pluck('value')[0];
         $st14varfix = number_format((float)$st14var, 2, '.', '');
 
-        $freq = DB::connection('pgsql')->table('history')
+        $freq11 = DB::connection('pgsql')->table('history')
+            ->selectRaw('value')
+            ->where('address_no', '=', '11MKA10CE103 XQ50')
+            ->orderBy('date_rec', 'desc')
+            ->limit(1)->pluck('value')[0];
+        $freqfix11 = number_format((float)$freq11, 2, '.', '');
+
+        $freq12 = DB::connection('pgsql')->table('history')
             ->selectRaw('value')
             ->where('address_no', '=', '12MKA10CE103 XQ50')
             ->orderBy('date_rec', 'desc')
             ->limit(1)->pluck('value')[0];
-        $freqfix = number_format((float)$freq, 2, '.', '');
+        $freqfix12 = number_format((float)$freq12, 2, '.', '');
+
+        $freq13 = DB::connection('pgsql')->table('history')
+            ->selectRaw('value')
+            ->where('address_no', '=', '13MKA10CE103 XQ50')
+            ->orderBy('date_rec', 'desc')
+            ->limit(1)->pluck('value')[0];
+        $freqfix13 = number_format((float)$freq13, 2, '.', '');
+
+        
+        if ($gt11powerfix > 5) {
+            $freqfix = $freqfix11;
+        }
+
+        if ($gt12powerfix > 5) {
+            $freqfix = $freqfix12;
+        }
+        
+        if ($gt13powerfix > 5) {
+            $freqfix = $freqfix13;
+        }
 
         $ntwkvolt = DB::connection('pgsql')->table('history')
             ->selectRaw('value')
@@ -434,17 +462,290 @@ class AnalisysController extends Controller
             ->where('address_no', '=', '12MKA10CE104 XQ50')
             ->orderBy('date_rec', 'desc')
             ->limit(1)->pluck('value')[0];
+
+        $HVCB12 = $voltageGT12L1 * 31.25 + (0.05 * 500); 
+        $HVCBfix12 = number_format((float)$HVCB12, 2, '.', '');
         
-        $HVCB = $voltageGT12L1 * 31.25;
-        $HVCBfix = number_format((float)$HVCB, 2, '.', '');
+        $voltageGT11L1 = DB::connection('pgsql')->table('history')
+            ->selectRaw('value')
+            ->where('address_no', '=', '11MKA10CE104 XQ50')
+            ->orderBy('date_rec', 'desc')
+            ->limit(1)->pluck('value')[0];
+        $HVCB11 = $voltageGT11L1 * 31.25 + (0.05 * 500);
+        $HVCBfix11 = number_format((float)$HVCB11, 2, '.', '');    
+
+        $voltageGT13L1 = DB::connection('pgsql')->table('history')
+            ->selectRaw('value')
+            ->where('address_no', '=', '13MKA10CE104 XQ50')
+            ->orderBy('date_rec', 'desc')
+            ->limit(1)->pluck('value')[0];  
+            
+        $HVCB13 = $voltageGT13L1 * 31.25 + (0.05 * 500);
+        $HVCBfix13 = number_format((float)$HVCB13, 2, '.', '');
+
+        if ($voltageGT11L1 > 5 ) {
+            $HVCBfix = $HVCBfix11;
+        }
+
+        if ($voltageGT12L1 > 5 ) {
+            $HVCBfix = $HVCBfix12;
+        }
+
+        if ($voltageGT13L1 > 5 ) {
+            $HVCBfix = $HVCBfix13;
+
+            // Jika ada anomaly langsung ke database
+           /* AnomalyModel::create([
+                'image'     => $image->hashName(),
+                'title'     => $request->title,
+                'content'   => $request->content
+            ]);*/
+        } 
 
         $testdata = DB::connection('pgsql')->table('history')
             ->selectRaw('value')
             ->where('address_no', '=', '13MKA10CE611 XQ50')
             ->orderBy('date_rec', 'desc')
-            ->limit(20)->pluck('value');
+            ->limit(20)->pluck('value')[0];
 
-        //dd($testdata);
+        $voltageGT11L1L2 = DB::connection('pgsql')->table('history')
+            ->selectRaw('value')
+            ->where('address_no', '=', '11MKA10CE104 XQ50')
+            ->orderBy('date_rec', 'desc')
+            ->limit(1)->pluck('value')[0];
+
+        $voltageGT11L2L3 = DB::connection('pgsql')->table('history')
+            ->selectRaw('value')
+            ->where('address_no', '=', '11MKA10CE105 XQ50')
+            ->orderBy('date_rec', 'desc')
+            ->limit(1)->pluck('value')[0];
+
+        $voltageGT11L3L1 = DB::connection('pgsql')->table('history')
+            ->selectRaw('value')
+            ->where('address_no', '=', '11MKA10CE106 XQ50')
+            ->orderBy('date_rec', 'desc')
+            ->limit(1)->pluck('value')[0];
+
+        $voltageGT12L1L2 = DB::connection('pgsql')->table('history')
+            ->selectRaw('value')
+            ->where('address_no', '=', '12MKA10CE104 XQ50')
+            ->orderBy('date_rec', 'desc')
+            ->limit(1)->pluck('value')[0];
+
+        $voltageGT12L2L3 = DB::connection('pgsql')->table('history')
+            ->selectRaw('value')
+            ->where('address_no', '=', '12MKA10CE105 XQ50')
+            ->orderBy('date_rec', 'desc')
+            ->limit(1)->pluck('value')[0];
+
+        $voltageGT12L3L1 = DB::connection('pgsql')->table('history')
+            ->selectRaw('value')
+            ->where('address_no', '=', '12MKA10CE106 XQ50')
+            ->orderBy('date_rec', 'desc')
+            ->limit(1)->pluck('value')[0];
+
+        $voltageGT13L1L2 = DB::connection('pgsql')->table('history')
+            ->selectRaw('value')
+            ->where('address_no', '=', '13MKA10CE104 XQ50')
+            ->orderBy('date_rec', 'desc')
+            ->limit(1)->pluck('value')[0];
+
+        $voltageGT13L2L3 = DB::connection('pgsql')->table('history')
+            ->selectRaw('value')
+            ->where('address_no', '=', '13MKA10CE105 XQ50')
+            ->orderBy('date_rec', 'desc')
+            ->limit(1)->pluck('value')[0];
+
+        $voltageGT13L3L1 = DB::connection('pgsql')->table('history')
+            ->selectRaw('value')
+            ->where('address_no', '=', '13MKA10CE106 XQ50')
+            ->orderBy('date_rec', 'desc')
+            ->limit(1)->pluck('value')[0];
+
+        
+        $avgvoltage11 = number_format((float)($voltageGT11L1L2 + $voltageGT11L2L3 + $voltageGT11L3L1) / 3, 2, '.', '');
+        $avgvoltage12 = number_format((float)($voltageGT12L1L2 + $voltageGT12L2L3 + $voltageGT12L3L1) / 3, 2, '.', '');
+        $avgvoltage13 = number_format((float)($voltageGT13L1L2 + $voltageGT13L2L3 + $voltageGT13L3L1) / 3, 2, '.', '');
+
+        if ($avgvoltage11 == 0) {
+            $avgvoltage11 = 0.01;
+        }
+
+        if ($avgvoltage12 == 0) {
+            $avgvoltage12 = 0.01;
+        }
+
+        if ($avgvoltage13 == 0) {
+            $avgvoltage13 = 0.01;
+        }
+
+        $deviation1volt11 = abs(number_format((float)$voltageGT11L1L2 - $voltageGT11L2L3, 2, '.', ''));
+        $deviation2volt11 = abs(number_format((float)$voltageGT11L1L2 - $voltageGT11L3L1, 2, '.', ''));
+        $deviation3volt11 = abs(number_format((float)$voltageGT11L2L3 - $voltageGT11L3L1, 2, '.', ''));
+
+        $deviation1volt12 = abs(number_format((float)$voltageGT12L1L2 - $voltageGT12L2L3, 2, '.', ''));
+        $deviation2volt12 = abs(number_format((float)$voltageGT12L1L2 - $voltageGT12L3L1, 2, '.', ''));
+        $deviation3volt12 = abs(number_format((float)$voltageGT12L2L3 - $voltageGT12L3L1, 2, '.', ''));
+
+        $deviation1volt13 = abs(number_format((float)$voltageGT13L1L2 - $voltageGT13L2L3, 2, '.', ''));
+        $deviation2volt13 = abs(number_format((float)$voltageGT13L1L2 - $voltageGT13L3L1, 2, '.', ''));
+        $deviation3volt13 = abs(number_format((float)$voltageGT13L2L3 - $voltageGT13L3L1, 2, '.', ''));
+
+        $maxdeviationvolt11 = max($deviation1volt11, $deviation2volt11, $deviation3volt11);
+        $maxdeviationvolt12 = max($deviation1volt12, $deviation2volt12, $deviation3volt12);
+        $maxdeviationvolt13 = max($deviation1volt13, $deviation2volt13, $deviation3volt13);
+
+        $unbalancevoltGT11 = number_format((float)($maxdeviationvolt11 / $avgvoltage11) * 100, 2, '.', '');
+        $unbalancevoltGT12 = number_format((float)($maxdeviationvolt12 / $avgvoltage12) * 100, 2, '.', '');
+        $unbalancevoltGT13 = number_format((float)($maxdeviationvolt13 / $avgvoltage13) * 100, 2, '.', '');
+
+        if ($unbalancevoltGT11 > 5 && $unbalancevoltGT11 <10)
+        {
+            // Jika ada anomaly langsung ke database
+            AnomalyModel::create([
+                'anomaly' => 'unbalance voltage GT11 ('.$unbalancevoltGT11.' %)',
+                'action'  => 'not normal',
+            ]);
+        }
+
+        if ($unbalancevoltGT12 > 5 && $unbalancevoltGT12 <10)
+        {
+            // Jika ada anomaly langsung ke database
+            AnomalyModel::create([
+                'anomaly' => 'unbalance voltage GT12 ('.$unbalancevoltGT12.' %)',
+                'action'  => 'not normal',
+            ]);
+        }
+
+        if ($unbalancevoltGT13 > 5 && $unbalancevoltGT13 <10)
+        {
+            // Jika ada anomaly langsung ke database
+            AnomalyModel::create([
+                'anomaly' => 'unbalance voltage GT13 ('.$unbalancevoltGT13.' %)',
+                'action'  => 'not normal',
+            ]);
+        }
+
+        //dd($unbalancevoltGT13);
+
+        $currentgt131 = DB::connection('pgsql')->table('history')
+            ->selectRaw('value')
+            ->where('address_no', '=', '13MKA10CE611 XQ50')
+            ->orderBy('date_rec', 'desc')
+            ->limit(1)->pluck('value')[0];
+
+        $currentgt132 = DB::connection('pgsql')->table('history')
+            ->selectRaw('value')
+            ->where('address_no', '=', '13MKA10CE621 XQ50')
+            ->orderBy('date_rec', 'desc')
+            ->limit(1)->pluck('value')[0];
+
+        $currentgt133 = DB::connection('pgsql')->table('history')
+            ->selectRaw('value')
+            ->where('address_no', '=', '13MKA10CE631 XQ50')
+            ->orderBy('date_rec', 'desc')
+            ->limit(1)->pluck('value')[0];
+
+        $currentgt121 = DB::connection('pgsql')->table('history')
+            ->selectRaw('value')
+            ->where('address_no', '=', '12MKA10CE611 XQ50')
+            ->orderBy('date_rec', 'desc')
+            ->limit(1)->pluck('value')[0];
+
+        $currentgt122 = DB::connection('pgsql')->table('history')
+            ->selectRaw('value')
+            ->where('address_no', '=', '12MKA10CE621 XQ50')
+            ->orderBy('date_rec', 'desc')
+            ->limit(1)->pluck('value')[0];
+
+        $currentgt123 = DB::connection('pgsql')->table('history')
+            ->selectRaw('value')
+            ->where('address_no', '=', '12MKA10CE631 XQ50')
+            ->orderBy('date_rec', 'desc')
+            ->limit(1)->pluck('value')[0];
+
+        $currentgt111 = DB::connection('pgsql')->table('history')
+            ->selectRaw('value')
+            ->where('address_no', '=', '11MKA10CE611 XQ50')
+            ->orderBy('date_rec', 'desc')
+            ->limit(1)->pluck('value')[0];
+
+        $currentgt112 = DB::connection('pgsql')->table('history')
+            ->selectRaw('value')
+            ->where('address_no', '=', '11MKA10CE621 XQ50')
+            ->orderBy('date_rec', 'desc')
+            ->limit(1)->pluck('value')[0];
+
+        $currentgt113 = DB::connection('pgsql')->table('history')
+            ->selectRaw('value')
+            ->where('address_no', '=', '11MKA10CE631 XQ50')
+            ->orderBy('date_rec', 'desc')
+            ->limit(1)->pluck('value')[0];
+
+        $avgcurrent11 = number_format((float)($currentgt111 + $currentgt112 + $currentgt113) / 3, 2, '.', '');
+        $avgcurrent12 = number_format((float)($currentgt121 + $currentgt122 + $currentgt123) / 3, 2, '.', '');
+        $avgcurrent13 = number_format((float)($currentgt131 + $currentgt132 + $currentgt133) / 3, 2, '.', '');
+
+        if ($avgcurrent11 == 0) {
+            $avgcurrent11 = 0.01;
+        }
+
+        if ($avgcurrent12 == 0) {
+            $avgcurrent12 = 0.01;
+        }
+
+        if ($avgcurrent13 == 0) {
+            $avgcurrent13 = 0.01;
+        }
+
+        $deviation1current11 = abs(number_format((float)$currentgt111 - $currentgt112, 2, '.', ''));
+        $deviation2current11 = abs(number_format((float)$currentgt111 - $currentgt113, 2, '.', ''));
+        $deviation3current11 = abs(number_format((float)$currentgt113 - $currentgt112, 2, '.', ''));
+
+        $deviation1current12 = abs(number_format((float)$currentgt121 - $currentgt122, 2, '.', ''));
+        $deviation2current12 = abs(number_format((float)$currentgt121 - $currentgt123, 2, '.', ''));
+        $deviation3current12 = abs(number_format((float)$currentgt123 - $currentgt122, 2, '.', ''));
+        
+        $deviation1current13 = abs(number_format((float)$currentgt131 - $currentgt132, 2, '.', ''));
+        $deviation2current13 = abs(number_format((float)$currentgt131 - $currentgt133, 2, '.', ''));
+        $deviation3current13 = abs(number_format((float)$currentgt133 - $currentgt132, 2, '.', ''));
+        
+        $maxdeviationcurrent11 = max($deviation1current11, $deviation2current11, $deviation3current11);
+        $maxdeviationcurrent12 = max($deviation1current12, $deviation2current12, $deviation3current12);
+        $maxdeviationcurrent13 = max($deviation1current13, $deviation2current13, $deviation3current13);
+
+        $unbalancecurrentGT11 = number_format((float)($maxdeviationcurrent11 / $avgcurrent11) * 100, 2, '.', '');
+        $unbalancecurrentGT12 = number_format((float)($maxdeviationcurrent12 / $avgcurrent12) * 100, 2, '.', '');
+        $unbalancecurrentGT13 = number_format((float)($maxdeviationcurrent13 / $avgcurrent13) * 100, 2, '.', '');
+
+        if ($unbalancecurrentGT11 > 5 && $unbalancecurrentGT11 <10)
+        {
+            // Jika ada anomaly langsung ke database
+            AnomalyModel::create([
+                'anomaly' => 'unbalance current GT11 ('.$unbalancecurrentGT11.' %)',
+                'action'  => 'not normal',
+            ]);
+        }
+
+        if ($unbalancecurrentGT12 > 5 && $unbalancecurrentGT12 <10)
+        {
+            // Jika ada anomaly langsung ke database
+            AnomalyModel::create([
+                'anomaly' => 'unbalance current GT12 ('.$unbalancecurrentGT12.' %)',
+                'action'  => 'not normal',
+            ]);
+        }
+
+        if ($unbalancecurrentGT13 > 5 && $unbalancecurrentGT13 <10)
+        {
+            // Jika ada anomaly langsung ke database
+            AnomalyModel::create([
+                'anomaly' => 'unbalance current GT13 ('.$unbalancecurrentGT13.' %)',
+                'action'  => 'not normal',
+            ]);
+        }
+
+        $countnotification = AnomalyModel::where('action', 'not normal')->count();
 
         if ($request->ajax()) {
             return response()->json(
@@ -464,6 +765,12 @@ class AnalisysController extends Controller
                     'excgt12' => $excgt12fix,
                     'excgt13' => $excgt13fix,
                     'excst14' => $excst14fix,
+                    'unbalancevoltGT11' => $unbalancevoltGT11,
+                    'unbalancevoltGT12' => $unbalancevoltGT12,
+                    'unbalancevoltGT13' => $unbalancevoltGT13,
+                    'unbalancecurrentGT11' => $unbalancecurrentGT11,
+                    'unbalancecurrentGT12' => $unbalancecurrentGT12,
+                    'unbalancecurrentGT13' => $unbalancecurrentGT13,
                 ]
             );
         }
@@ -490,6 +797,13 @@ class AnalisysController extends Controller
             'excgt12' => $excgt12fix,
             'excgt13' => $excgt13fix,
             'excst14' => $excst14fix,
+            'unbalancevoltGT11' => $unbalancevoltGT11,
+            'unbalancevoltGT12' => $unbalancevoltGT12,
+            'unbalancevoltGT13' => $unbalancevoltGT13,
+            'unbalancecurrentGT11' => $unbalancecurrentGT11,
+            'unbalancecurrentGT12' => $unbalancecurrentGT12,
+            'unbalancecurrentGT13' => $unbalancecurrentGT13,
+            'countnotification' => $countnotification,
         ]);
     }
 
@@ -669,6 +983,26 @@ class AnalisysController extends Controller
             'reliability8' => $reliability8,
             'reliability9' => $reliability9,
             'reliability10' => $reliability10,
+        ]);
+    }
+
+    public function weibullIndex()
+    {
+
+        return view(
+            'analisis/weibull',
+        );
+    }
+
+    public function notificationIndex()
+    {
+
+        $tablenotification = AnomalyModel::orderBy('created_at', 'desc')->paginate(5);
+        $countnotification = AnomalyModel::where('action', 'not normal')->count();
+
+        return view('analisis.notificationpltgu', [
+            'tablenotification' => $tablenotification,
+            'countnotification' => $countnotification,
         ]);
     }
 

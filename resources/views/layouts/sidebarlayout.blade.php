@@ -242,7 +242,7 @@
                     @if (request()->route()->uri === 'pmcompliancemech' ||
                             request()->route()->uri === 'reactiveworkmech' ||
                             request()->route()->uri === 'reworkmech' ||
-                            request()->route()->uri === 'wrenchtimemech') class="menu-item active"
+                            request()->route()->uri === 'wrench-time-mech') class="menu-item active"
                     @else class="menu-item" @endif>
                     <a href="#" class="menu-link menu-toggle">
                         <i class="menu-icon tf-icons bx bx-line-chart-down"></i>
@@ -265,7 +265,7 @@
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="{{ asset('/wrenchtimemech') }}" class="menu-link">
+                            <a href="{{ asset('/wrench-time-mech') }}" class="menu-link">
                                 <div data-i18n="Account">Wrench Time</div>
                             </a>
                         </li>
@@ -299,7 +299,7 @@
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="{{ asset('/wrenchtimeinst') }}" class="menu-link">
+                            <a href="{{ asset('/wrench-time-inst') }}" class="menu-link">
                                 <div data-i18n="Account">Wrench Time</div>
                             </a>
                         </li>
@@ -343,10 +343,22 @@
                 </li>
 
                 <li class="menu-item">
-                    <a href="{{ asset('/pku-online') }}" class="menu-link">
-                        <i class="menu-icon tf-icons bx bx-heart"></i>
+                    <a href="#" class="menu-link menu-toggle">
+                        <i class="menu-icon tf-icons bx bx-desktop"></i>
                         <div data-i18n="Boxicons">PKU</div>
                     </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item">
+                            <a href="{{ asset('/pku-online') }}" class="menu-link">
+                                <div data-i18n="Boxicons">Lognormal</div>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="{{ asset('/weibull-reliability') }}" class="menu-link">
+                                <div data-i18n="Boxicons">Weibull</div>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
 
                 <!-- Forms & Tables -->
@@ -368,7 +380,7 @@
                     </ul>
                 </li>
 
-                <!-- Misc -->
+                <!-- Misc 
                 <li class="menu-header small text-uppercase"><span class="menu-header-text">Other Feature</span></li>
                 <li class="menu-item">
                     <a href="https://github.com/themeselection/sneat-html-admin-template-free/issues" target="_blank"
@@ -383,7 +395,7 @@
                         <i class="menu-icon tf-icons bx bx-file"></i>
                         <div data-i18n="Documentation">Documentation</div>
                     </a>
-                </li>
+                </li> -->
             </ul>
         </aside>
         <!-- / Menu -->

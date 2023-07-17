@@ -206,6 +206,7 @@
                             <span class="fw-semibold d-block mb-1">GT11</span>
                             <span class="fw-semibold d-block mb-1" id="statusgt11"></span>
                             <h3 class="card-title mb-2 text-white" id="mwgt11">-</h3>
+                            <h3 class="card-title mb-2">{{ $error }}</h3>
                         </div>
                     </div>
                 </div>
@@ -216,6 +217,7 @@
                             <span class="fw-semibold d-block mb-1">GT12</span>
                             <span class="fw-semibold d-block mb-1" id="statusgt12"></span>
                             <h3 class="card-title mb-2 text-white" id="mwgt12">-</h3>
+                            <h3 class="card-title mb-2">{{ $error }}</h3>
                         </div>
                     </div>
                 </div>
@@ -226,6 +228,7 @@
                             <span class="fw-semibold d-block mb-1">GT13</span>
                             <span class="fw-semibold d-block mb-1" id="statusgt13"></span>
                             <h3 class="card-title mb-2 text-white" id="mwgt13">-</h3>
+                            <h3 class="card-title mb-2">{{ $error }}</h3>
                         </div>
                     </div>
                 </div>
@@ -236,6 +239,7 @@
                             <span class="fw-semibold d-block mb-1">GT21</span>
                             <span class="fw-semibold d-block mb-1" id="statusgt21"></span>
                             <h3 class="card-title mb-2 text-white" id="mwgt21">-</h3>
+                            <h3 class="card-title mb-2">{{ $error }}</h3>
                         </div>
                     </div>
                 </div>
@@ -246,6 +250,7 @@
                             <span class="fw-semibold d-block mb-1">GT22</span>
                             <span class="fw-semibold d-block mb-1" id="statusgt22"></span>
                             <h3 class="card-title mb-2 text-white" id="mwgt22">-</h3>
+                            <h3 class="card-title mb-2">{{ $error }}</h3>
                         </div>
                     </div>
                 </div>
@@ -256,6 +261,7 @@
                             <span class="fw-semibold d-block mb-1">ST14</span>
                             <span class="fw-semibold d-block mb-1" id="statusst14"></span>
                             <h3 class="card-title mb-2 text-white" id="mwst14">-</h3>
+                            <h3 class="card-title mb-2">{{ $error }}</h3>
                         </div>
                     </div>
                 </div>

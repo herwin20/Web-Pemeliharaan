@@ -85,6 +85,8 @@ Route::controller(AnalisysController::class)->group(function () {
     route::get('motor', 'motorindex')->middleware('auth');
     route::post('motor-import', 'importcooler')->name('analisis/motor.import')->middleware('auth');
     route::get('pku-online', 'pkuindex')->middleware('auth');
+    Route::get('weibull-reliability', 'weibullIndex')->middleware('auth');
+    Route::get('notification-pltgu', 'notificationIndex')->middleware('auth');
 });
 
 // Blok 1
@@ -112,6 +114,8 @@ Route::get('report-pekerjaan5/destroy/{id}/', [ReportController5::class, 'destro
 Route::get('report-analyze5', [ReportController5::class, 'analyze'])->middleware('auth');
 
 Route::get('wrench-time', [WrenchTimeController::class, 'index'])->middleware('auth');
+Route::get('wrench-time-mech', [WrenchTimeController::class, 'indexMech'])->middleware('auth');
+Route::get('wrench-time-inst', [WrenchTimeController::class, 'indexInst'])->middleware('auth');
 Route::post('wrench-time-import', [WrenchTimeController::class, 'import'])->name('kpi/wrenchtime.import')->middleware('auth');
 
 Route::get('calendarlistrik', [CalendarController::class, 'indexcalendar'])->middleware('auth');
