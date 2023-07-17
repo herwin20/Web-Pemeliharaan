@@ -70,7 +70,7 @@
                                     <button class="btn btn-danger "
                                         onclick="window.open('{{ asset('/pmcompliancepdf/print_report') }}','_blank')"
                                         type="button" target="_blank">
-                                        Print Report Blok 1-2
+                                        Print Report Blok 1
                                     </button>
                                 @endif
                                 @if ($option == 'TMECH34')
