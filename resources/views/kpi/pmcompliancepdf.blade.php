@@ -120,9 +120,14 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-6 col-lg-6 col-xl-6 order-0 mb-1 mt-10">
+            <h5>PM Compliance : {{ $totalkpifix }} %</h5>
+            <h5>Min Target  : 100 % </h5>
+        </div>
         <div class="page-break"></div>
         <div class="col-md-12 col-lg-12 col-xl-12 order-0 mt-3">
             <div class="text-center">
+                <h4 class="m-0 me-2">Grafik PM Compliance {{ $namaunit }}</h4>
                 <img src="https://quickchart.io/chart?v=2.9.4&c={ type: 'bar', data: { labels: [
                     ['Jan', '{{ $pmcompliancejanfix }}'],
                     ['Feb', '{{ $pmcompliancefebfix }}'],
@@ -239,6 +244,10 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="col-md-6 col-lg-6 col-xl-6 order-0 mb-1 mt-10">
+            <h5>Reactive Work : {{ $totalreactiveworkfix }} %</h5>
+            <h5>Min Target  : 5 % </h5>
         </div>
         <div class="page-break"></div>
         <div class="col-md-12 col-lg-12 col-xl-12 order-0 mt-3">
@@ -360,6 +369,10 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-6 col-lg-6 col-xl-6 order-0 mb-1 mt-10">
+            <h5>ReWork : {{ $totalreworkfix }} %</h5>
+            <h5>Min Target  : 5 % </h5>
+        </div>
         <div class="page-break"></div>
         <div class="col-md-12 col-lg-12 col-xl-12 order-0 mt-3">
             <div class="text-center">
@@ -392,6 +405,236 @@
                             {{ $jumlahwocrjul }}, {{ $jumlahwocraug }},
                             {{ $jumlahwocrsep }}, {{ $jumlahwocroct }},
                             {{ $jumlahwocrnov }}, {{ $jumlahwocrdes }}
+                        ] }, ], }, }"
+                    class="img-fluid" alt="">
+            </div>
+        </div>
+
+        <div class="page-break"></div>
+        <div class="col-md-12 col-lg-12 col-xl-12 order-0 mb-1">
+            <div class="card">
+                <div class="card-header text-center">
+                    <div class="card-title mb-0">
+                        <h4 class="m-0 me-2">Report Wrenchtime {{ $namaunit }}</h4>
+                        <small class="text-muted">Periode Januari - Desember {{ $thisyear }}</small>
+                        <div class="text-center">
+                            <img src="assets/img/illustrations/PLNNPnew.png" alt="">
+                        </div>
+                    </div>
+                </div>
+                @foreach($getWrenchtime as $item)
+                        @php
+                        $item->start_repair_date;
+                        if(str_contains($item->start_repair_date, '202301')) {
+                            $janhandonrepairs += $item->on_hand_repairs;
+                            $jantimeonrepairs += $item->time_to_repairs;
+                        }
+                        if(str_contains($item->start_repair_date, '202302')) {
+                            $febhandonrepairs += $item->on_hand_repairs;
+                            $febtimeonrepairs += $item->time_to_repairs;
+                        }
+                        if(str_contains($item->start_repair_date, '202303')) {
+                            $marhandonrepairs += $item->on_hand_repairs;
+                            $martimeonrepairs += $item->time_to_repairs;
+                        }
+                        if(str_contains($item->start_repair_date, '202304')) {
+                            $aprhandonrepairs += $item->on_hand_repairs;
+                            $aprtimeonrepairs += $item->time_to_repairs;
+                        }
+                        if(str_contains($item->start_repair_date, '202305')) {
+                            $mayhandonrepairs += $item->on_hand_repairs;
+                            $maytimeonrepairs += $item->time_to_repairs;
+                        }
+                        if(str_contains($item->start_repair_date, '202306')) {
+                            $junhandonrepairs += $item->on_hand_repairs;
+                            $juntimeonrepairs += $item->time_to_repairs;
+                        }
+                        if(str_contains($item->start_repair_date, '202307')) {
+                            $julhandonrepairs += $item->on_hand_repairs;
+                            $jultimeonrepairs += $item->time_to_repairs;
+                        }
+                        if(str_contains($item->start_repair_date, '202308')) {
+                            $aughandonrepairs += $item->on_hand_repairs;
+                            $augtimeonrepairs += $item->time_to_repairs;
+                        }
+                        if(str_contains($item->start_repair_date, '202309')) {
+                            $sephandonrepairs += $item->on_hand_repairs;
+                            $septimeonrepairs += $item->time_to_repairs;
+                        }
+                        if(str_contains($item->start_repair_date, '2023010')) {
+                            $octhandonrepairs += $item->on_hand_repairs;
+                            $octtimeonrepairs += $item->time_to_repairs;
+                        }
+                        if(str_contains($item->start_repair_date, '202311')) {
+                            $novhandonrepairs += $item->on_hand_repairs;
+                            $novtimeonrepairs += $item->time_to_repairs;
+                        }
+                        if(str_contains($item->start_repair_date, '202312')) {
+                            $desbhandonrepairs += $item->on_hand_repairs;
+                            $destimeonrepairs += $item->time_to_repairs;
+                        }
+                        @endphp
+                @endforeach
+                
+                @php
+                    if($jantimeonrepairs == 0){$jantimeonrepairs = 0.001;}
+                    if($janhandonrepairs == 0){$janhandonrepairs = 0.001;}
+                    $janwrenchtime =  number_format((float)($janhandonrepairs / $jantimeonrepairs)*100, 1, '.', '');
+                    if($febtimeonrepairs == 0){$febtimeonrepairs = 0.001;}
+                    if($febhandonrepairs == 0){$febhandonrepairs = 0.001;}
+                    $febwrenchtime =  number_format((float)($febhandonrepairs / $febtimeonrepairs)*100, 1, '.', '');
+                    if($martimeonrepairs == 0){$martimeonrepairs = 0.001;}
+                    if($marhandonrepairs == 0){$marhandonrepairs = 0.001;}
+                    $marwrenchtime =  number_format((float)($marhandonrepairs / $martimeonrepairs)*100, 1, '.', '');
+                    if($aprtimeonrepairs == 0){$aprtimeonrepairs = 0.001;}
+                    if($aprhandonrepairs == 0){$aprhandonrepairs = 0.001;}
+                    $aprwrenchtime =  number_format((float)($aprhandonrepairs / $aprtimeonrepairs)*100, 1, '.', '');
+                    if($maytimeonrepairs == 0){$maytimeonrepairs = 0.001;}
+                    if($mayhandonrepairs == 0){$mayhandonrepairs = 0.001;}
+                    $maywrenchtime =  number_format((float)($mayhandonrepairs / $maytimeonrepairs)*100, 1, '.', '');
+                    if($juntimeonrepairs == 0){$juntimeonrepairs = 0.001;}
+                    if($junhandonrepairs == 0){$junhandonrepairs = 0.001;}
+                    $junwrenchtime =  number_format((float)($junhandonrepairs / $juntimeonrepairs)*100, 1, '.', '');
+                    if($jultimeonrepairs == 0){$jultimeonrepairs = 0.001;}
+                    if($julhandonrepairs == 0){$julhandonrepairs = 0.001;}
+                    $julwrenchtime =  number_format((float)($julhandonrepairs / $jultimeonrepairs)*100, 1, '.', '');
+                    if($augtimeonrepairs == 0){$augtimeonrepairs = 0.001;}
+                    if($aughandonrepairs == 0){$aughandonrepairs = 0.001;}
+                    $augwrenchtime =  number_format((float)($aughandonrepairs / $augtimeonrepairs)*100, 1, '.', '');
+                    if($septimeonrepairs == 0){$septimeonrepairs = 0.001;}
+                    if($sephandonrepairs == 0){$sephandonrepairs = 0.001;}
+                    $sepwrenchtime =  number_format((float)($sephandonrepairs / $septimeonrepairs)*100, 1, '.', '');
+                    if($octtimeonrepairs == 0){$octtimeonrepairs = 0.001;}
+                    if($octhandonrepairs == 0){$octhandonrepairs = 0.001;}
+                    $octwrenchtime =  number_format((float)($octhandonrepairs / $octtimeonrepairs)*100, 1, '.', '');
+                    if($novtimeonrepairs == 0){$novtimeonrepairs = 0.001;}
+                    if($novhandonrepairs == 0){$novhandonrepairs = 0.001;}
+                    $novwrenchtime =  number_format((float)($novhandonrepairs / $novtimeonrepairs)*100, 1, '.', '');
+                    if($destimeonrepairs == 0){$destimeonrepairs = 0.001;}
+                    if($deshandonrepairs == 0){$deshandonrepairs = 0.001;}
+                    $deswrenchtime =  number_format((float)($deshandonrepairs / $destimeonrepairs)*100, 1, '.', '');
+
+                    $totalwrenchtime = $janwrenchtime + $febwrenchtime + $marwrenchtime + $aprwrenchtime + $maywrenchtime + $junwrenchtime
+                            + $julwrenchtime + $augwrenchtime + $sepwrenchtime + $octwrenchtime + $novwrenchtime + $deswrenchtime;
+
+                    $fixtotalwrenchtime = number_format((float)$totalwrenchtime / 12, 1, '.', '');
+
+                    if ($fixtotalwrenchtime > 55 ) {
+                        $status = "Good";
+                    } else {
+                        $status = "Not Good";
+                    }
+
+                @endphp
+                <div class="card-body">
+                    <div class="table-responsive text-wrap">
+                        <table class="table">
+                            <thead>
+                                <tr class="table-primary">
+                                    <th class="fw-bold">Bulan</th>
+                                    <th class="fw-bold">Jan</th>
+                                    <th class="fw-bold">Feb</th>
+                                    <th class="fw-bold">Mar</th>
+                                    <th class="fw-bold">Apr</th>
+                                    <th class="fw-bold">May</th>
+                                    <th class="fw-bold">Jun</th>
+                                    <th class="fw-bold">Jul</th>
+                                    <th class="fw-bold">Aug</th>
+                                    <th class="fw-bold">Sep</th>
+                                    <th class="fw-bold">Oct</th>
+                                    <th class="fw-bold">Nov</th>
+                                    <th class="fw-bold">Des</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-border">
+                                <tr>
+                                    <td class="fw-bold">Hand On Repairs</td>
+                                    <td>{{ $janhandonrepairs }}</td>
+                                    <td>{{ $febhandonrepairs }}</td>
+                                    <td>{{ $marhandonrepairs }}</td>
+                                    <td>{{ $aprhandonrepairs }}</td>
+                                    <td>{{ $mayhandonrepairs }}</td>
+                                    <td>{{ $junhandonrepairs }}</td>
+                                    <td>{{ $julhandonrepairs }}</td>
+                                    <td>{{ $aughandonrepairs }}</td>
+                                    <td>{{ $sephandonrepairs }}</td>
+                                    <td>{{ $octhandonrepairs }}</td>
+                                    <td>{{ $novhandonrepairs }}</td>
+                                    <td>{{ $deshandonrepairs }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Time On Repairs</td>
+                                    <td>{{ $jantimeonrepairs }}</td>
+                                    <td>{{ $febtimeonrepairs }}</td>
+                                    <td>{{ $martimeonrepairs }}</td>
+                                    <td>{{ $aprtimeonrepairs }}</td>
+                                    <td>{{ $maytimeonrepairs }}</td>
+                                    <td>{{ $juntimeonrepairs }}</td>
+                                    <td>{{ $jultimeonrepairs }}</td>
+                                    <td>{{ $augtimeonrepairs }}</td>
+                                    <td>{{ $septimeonrepairs }}</td>
+                                    <td>{{ $octtimeonrepairs }}</td>
+                                    <td>{{ $novtimeonrepairs }}</td>
+                                    <td>{{ $destimeonrepairs }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Wrenchtime (%)</td>
+                                    <td>{{ $janwrenchtime }}</td>
+                                    <td>{{ $febwrenchtime }}</td>
+                                    <td>{{ $marwrenchtime }}</td>
+                                    <td>{{ $aprwrenchtime }}</td>
+                                    <td>{{ $maywrenchtime }}</td>
+                                    <td>{{ $junwrenchtime }}</td>
+                                    <td>{{ $julwrenchtime }}</td>
+                                    <td>{{ $augwrenchtime }}</td>
+                                    <td>{{ $sepwrenchtime }}</td>
+                                    <td>{{ $octwrenchtime }}</td>
+                                    <td>{{ $novwrenchtime }}</td>
+                                    <td>{{ $deswrenchtime }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-6 col-xl-6 order-0 mb-1 mt-10">
+            <h5>Wrench time : {{ $fixtotalwrenchtime }} %</h5>
+            <h5>Min Target  : 55 % </h5>
+            <h5>Status      : {{ $status }}</h5>
+        </div>
+        <div class="page-break"></div>
+        <div class="col-md-12 col-lg-12 col-xl-12 order-0 mt-3">
+            <div class="text-center">
+                <img src="https://quickchart.io/chart?v=2.9.4&c={ type: 'bar', data: { labels: [
+                    ['Jan', '{{ $janwrenchtime }} '],
+                    ['Feb', '{{ $febwrenchtime }} '],
+                    ['Mar', '{{ $marwrenchtime }} '],
+                    ['Apr', '{{ $aprwrenchtime }} '],
+                    ['Mei', '{{ $maywrenchtime }} '],
+                    ['Jun', '{{ $junwrenchtime }} '],
+                    ['Jul', '{{ $julwrenchtime }} '],
+                    ['Aug', '{{ $augwrenchtime }} '],
+                    ['Sep', '{{ $sepwrenchtime }} '],
+                    ['Oct', '{{ $octwrenchtime }} '],
+                    ['Nov', '{{ $novwrenchtime }} '],
+                    ['Des', '{{ $deswrenchtime }} ']
+                ], datasets: [ { 
+                    label: 'Hand On Repairs', data: [
+                        {{ $janhandonrepairs }}, {{ $febhandonrepairs }},
+                            {{ $marhandonrepairs }}, {{ $aprhandonrepairs }},
+                            {{ $mayhandonrepairs }}, {{ $junhandonrepairs }},
+                            {{ $julhandonrepairs }}, {{ $aughandonrepairs }},
+                            {{ $sephandonrepairs }}, {{ $octhandonrepairs }},
+                            {{ $novhandonrepairs }}, {{ $deshandonrepairs }}
+                        ] }, 
+                    { label: 'Time On Repairs', data: [
+                        {{ $jantimeonrepairs }}, {{ $febtimeonrepairs }},
+                            {{ $martimeonrepairs }}, {{ $aprtimeonrepairs }},
+                            {{ $maytimeonrepairs }}, {{ $juntimeonrepairs }},
+                            {{ $jultimeonrepairs }}, {{ $augtimeonrepairs }},
+                            {{ $septimeonrepairs }}, {{ $octtimeonrepairs }},
+                            {{ $novtimeonrepairs }}, {{ $destimeonrepairs }}
                         ] }, ], }, }"
                     class="img-fluid" alt="">
             </div>

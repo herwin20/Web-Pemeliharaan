@@ -120,6 +120,11 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-6 col-lg-6 col-xl-6 order-0 mb-1 mt-10">
+            <h5>Wrench time : {{ $totalkpifix }} %</h5>
+            <h5>Min Target  : 80 % </h5>
+           
+        </div>
         <div class="page-break"></div>
         <div class="col-md-12 col-lg-12 col-xl-12 order-0 mt-3">
             <div class="text-center">

@@ -16,18 +16,21 @@ class KPIControllerInst extends Controller
         $thisyear = Carbon::now()->format('Y');
         $notcomply = Carbon::now()->subMonth(1)->format('Y-m-d');
         $notcomplydate = Carbon::now()->setMonth(1)->format('Y-m-d');
-        $jan = $thisyear.'-01';
-        $feb = $thisyear.'-02';
-        $mar = $thisyear.'-03';
-        $apr = $thisyear.'-04';
-        $may = $thisyear.'-05';
-        $jun = $thisyear.'-06';
-        $jul = $thisyear.'-07';
-        $aug = $thisyear.'-08';
-        $sep = $thisyear.'-09';
-        $oct = $thisyear.'-10';
-        $nov = $thisyear.'-11';
-        $des = $thisyear.'-12';
+        $jan = $thisyear . '-01';
+        $feb = $thisyear . '-02';
+        $mar = $thisyear . '-03';
+        $apr = $thisyear . '-04';
+        $may = $thisyear . '-05';
+        $jun = $thisyear . '-06';
+        $jul = $thisyear . '-07';
+        $aug = $thisyear . '-08';
+        $sep = $thisyear . '-09';
+        $oct = $thisyear . '-10';
+        $nov = $thisyear . '-11';
+        $des = $thisyear . '-12';
+
+        $parse = Carbon::parse('now');
+        $getMonth = $parse->month;
 
         $year1 = Carbon::now()->subYears(7)->format('Y');
         $year2 = Carbon::now()->subYears(6)->format('Y');
@@ -440,7 +443,7 @@ class KPIControllerInst extends Controller
             // Total KPI Persen
             $totalkpi = ($pmcompliancejanfix + $pmcompliancefebfix + $pmcompliancemarfix + $pmcomplianceaprfix + $pmcompliancemayfix
                 + $pmcompliancejunfix + $pmcompliancejulfix + $pmcomplianceaugfix + $pmcompliancesepfix + $pmcomplianceoctfix
-                + $pmcompliancenovfix + $pmcompliancedesfix) / 12;
+                + $pmcompliancenovfix + $pmcompliancedesfix) / $getMonth;
 
             $totalkpifix = number_format((float)$totalkpi, 2, '.', '');
 
@@ -605,6 +608,9 @@ class KPIControllerInst extends Controller
         } else {
             $option = 'TINST';
             $namaunit = 'Instrument 1-2';
+
+            $parse = Carbon::parse('now');
+            $getMonth = $parse->month;
 
             $tablepmnotcomply = DB::table('msf620')
                 ->join('msf623', 'msf623.work_order', '=', 'msf620.work_order')
@@ -981,7 +987,7 @@ class KPIControllerInst extends Controller
             // Total KPI Persen
             $totalkpi = ($pmcompliancejanfix + $pmcompliancefebfix + $pmcompliancemarfix + $pmcomplianceaprfix + $pmcompliancemayfix
                 + $pmcompliancejunfix + $pmcompliancejulfix + $pmcomplianceaugfix + $pmcompliancesepfix + $pmcomplianceoctfix
-                + $pmcompliancenovfix + $pmcompliancedesfix) / 12;
+                + $pmcompliancenovfix + $pmcompliancedesfix) / $getMonth;
 
             $totalkpifix = number_format((float)$totalkpi, 2, '.', '');
 
@@ -1220,18 +1226,21 @@ class KPIControllerInst extends Controller
     public function ReactiveWork(Request $request)
     {
         $thisyear = Carbon::now()->format('Y');
-        $jan = $thisyear.'-01';
-        $feb = $thisyear.'-02';
-        $mar = $thisyear.'-03';
-        $apr = $thisyear.'-04';
-        $may = $thisyear.'-05';
-        $jun = $thisyear.'-06';
-        $jul = $thisyear.'-07';
-        $aug = $thisyear.'-08';
-        $sep = $thisyear.'-09';
-        $oct = $thisyear.'-10';
-        $nov = $thisyear.'-11';
-        $des = $thisyear.'-12';
+        $jan = $thisyear . '-01';
+        $feb = $thisyear . '-02';
+        $mar = $thisyear . '-03';
+        $apr = $thisyear . '-04';
+        $may = $thisyear . '-05';
+        $jun = $thisyear . '-06';
+        $jul = $thisyear . '-07';
+        $aug = $thisyear . '-08';
+        $sep = $thisyear . '-09';
+        $oct = $thisyear . '-10';
+        $nov = $thisyear . '-11';
+        $des = $thisyear . '-12';
+
+        $parse = Carbon::parse('now');
+        $getMonth = $parse->month;
 
         $option = 'TINST';
         $namaunit = 'Instrument 1-2';
@@ -1875,7 +1884,7 @@ class KPIControllerInst extends Controller
             // Total KPI Persen
             $totalreactivework = ($reactiveworkjanfix + $reactiveworkfebfix + $reactiveworkmarfix + $reactiveworkaprfix + $reactiveworkmayfix
                 + $reactiveworkjunfix + $reactiveworkjulfix + $reactiveworkaugfix + $reactiveworksepfix + $reactiveworkoctfix
-                + $reactiveworknovfix + $reactiveworkdesfix) / 12;
+                + $reactiveworknovfix + $reactiveworkdesfix) / $getMonth;
 
             $totalreactiveworkfix = number_format((float)$totalreactivework, 2, '.', '');
 
@@ -2011,6 +2020,9 @@ class KPIControllerInst extends Controller
 
             $option = 'TINST';
             $namaunit = 'Instrument 1-2';
+
+            $parse = Carbon::parse('now');
+            $getMonth = $parse->month;
 
             $jumlahwocryear = DB::table('msf620')
                 ->join('msf623', 'msf623.work_order', '=', 'msf620.work_order')
@@ -2638,7 +2650,7 @@ class KPIControllerInst extends Controller
             // Total KPI Persen
             $totalreactivework = ($reactiveworkjanfix + $reactiveworkfebfix + $reactiveworkmarfix + $reactiveworkaprfix + $reactiveworkmayfix
                 + $reactiveworkjunfix + $reactiveworkjulfix + $reactiveworkaugfix + $reactiveworksepfix + $reactiveworkoctfix
-                + $reactiveworknovfix + $reactiveworkdesfix) / 12;
+                + $reactiveworknovfix + $reactiveworkdesfix) / $getMonth;
 
             $totalreactiveworkfix = number_format((float)$totalreactivework, 2, '.', '');
 
@@ -2837,18 +2849,21 @@ class KPIControllerInst extends Controller
     public function ReWork(Request $request)
     {
         $thisyear = Carbon::now()->format('Y');
-        $jan = $thisyear.'-01';
-        $feb = $thisyear.'-02';
-        $mar = $thisyear.'-03';
-        $apr = $thisyear.'-04';
-        $may = $thisyear.'-05';
-        $jun = $thisyear.'-06';
-        $jul = $thisyear.'-07';
-        $aug = $thisyear.'-08';
-        $sep = $thisyear.'-09';
-        $oct = $thisyear.'-10';
-        $nov = $thisyear.'-11';
-        $des = $thisyear.'-12';
+        $jan = $thisyear . '-01';
+        $feb = $thisyear . '-02';
+        $mar = $thisyear . '-03';
+        $apr = $thisyear . '-04';
+        $may = $thisyear . '-05';
+        $jun = $thisyear . '-06';
+        $jul = $thisyear . '-07';
+        $aug = $thisyear . '-08';
+        $sep = $thisyear . '-09';
+        $oct = $thisyear . '-10';
+        $nov = $thisyear . '-11';
+        $des = $thisyear . '-12';
+
+        $parse = Carbon::parse('now');
+        $getMonth = $parse->month;
 
         $option = 'TINST';
         $namaunit = 'Instrumen 1-2';
@@ -3216,7 +3231,7 @@ class KPIControllerInst extends Controller
                 $rasioreworkfixapr + $rasioreworkfixmay + $rasioreworkfixjun +
                 $rasioreworkfixjul + $rasioreworkfixaug + $rasioreworkfixsep +
                 $rasioreworkfixoct + $rasioreworkfixnov + $rasioreworkfixdes
-            ) / 12;
+            ) / $getMonth;
             $totalreworkfix = number_format((float)$totalrework, 2, '.', '');
 
             $year3 = Carbon::now()->subYears(5)->format('Y');
@@ -3353,6 +3368,9 @@ class KPIControllerInst extends Controller
             $oct = Carbon::now()->setMonth(10)->format('Y-m');
             $nov = Carbon::now()->setMonth(11)->format('Y-m');
             $des = Carbon::now()->setMonth(12)->format('Y-m');
+
+            $parse = Carbon::parse('now');
+            $getMonth = $parse->month;
 
             $jumlahreworktahun = DB::table('msf620')
                 ->select('equip_no', DB::raw('COUNT(equip_no)'))
@@ -3705,7 +3723,7 @@ class KPIControllerInst extends Controller
                 $rasioreworkfixapr + $rasioreworkfixmay + $rasioreworkfixjun +
                 $rasioreworkfixjul + $rasioreworkfixaug + $rasioreworkfixsep +
                 $rasioreworkfixoct + $rasioreworkfixnov + $rasioreworkfixdes
-            ) / 12;
+            ) / $getMonth;
             $totalreworkfix = number_format((float)$totalrework, 2, '.', '');
 
             $year3 = Carbon::now()->subYears(5)->format('Y');

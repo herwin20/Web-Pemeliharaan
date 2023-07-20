@@ -51,6 +51,9 @@ class PDFCOntroller extends Controller
         $option = 'TELECT';
         $namaunit = 'Listrik 1-2';
 
+        $parse = Carbon::parse('now');
+        $getMonth = $parse->month;
+
         $tablepmnotcomply = DB::table('msf620')
             ->join('msf623', 'msf623.work_order', '=', 'msf620.work_order')
             ->where([
@@ -426,7 +429,7 @@ class PDFCOntroller extends Controller
         // Total KPI Persen
         $totalkpi = ($pmcompliancejanfix + $pmcompliancefebfix + $pmcompliancemarfix + $pmcomplianceaprfix + $pmcompliancemayfix
             + $pmcompliancejunfix + $pmcompliancejulfix + $pmcomplianceaugfix + $pmcompliancesepfix + $pmcomplianceoctfix
-            + $pmcompliancenovfix + $pmcompliancedesfix) / 12;
+            + $pmcompliancenovfix + $pmcompliancedesfix) / $getMonth;
 
         $totalkpifix = number_format((float)$totalkpi, 2, '.', '');
 
@@ -1063,7 +1066,7 @@ class PDFCOntroller extends Controller
         // Total KPI Persen
         $totalreactivework = ($reactiveworkjanfix + $reactiveworkfebfix + $reactiveworkmarfix + $reactiveworkaprfix + $reactiveworkmayfix
             + $reactiveworkjunfix + $reactiveworkjulfix + $reactiveworkaugfix + $reactiveworksepfix + $reactiveworkoctfix
-            + $reactiveworknovfix + $reactiveworkdesfix) / 12;
+            + $reactiveworknovfix + $reactiveworkdesfix) / $getMonth;
 
         $totalreactiveworkfix = number_format((float)$totalreactivework, 2, '.', '');
 
@@ -1425,8 +1428,150 @@ class PDFCOntroller extends Controller
             $rasioreworkfixapr + $rasioreworkfixmay + $rasioreworkfixjun +
             $rasioreworkfixjul + $rasioreworkfixaug + $rasioreworkfixsep +
             $rasioreworkfixoct + $rasioreworkfixnov + $rasioreworkfixdes
-        ) / 12;
+        ) / $getMonth;
         $totalreworkfix = number_format((float)$totalrework, 2, '.', '');
+
+        $namaunit = 'Listrik 1-2';
+        $thisyear = Carbon::now()->format('Y');
+        $option = 'TELECT';
+        $start = 0101;
+        $end = 1231;
+        $getWrenchtime = DB::connection('oracle')->select(
+            "SELECT DISTINCT
+                t.work_order wo_number,
+                t.plant_no plant_no,
+                t.wo_desc description_wo,
+                t.work_group work_group_header,
+                t.wo_status_m wo_status,
+                t.maint_type mt_type,
+                t.start_repair start_repair_date,
+                t.start_time start_repair_time,
+                t.stop_repair stop_repair_date,
+                t.finish_time stop_repair_time,
+                t.working_days,
+                (to_number(SubStr(To_Char(t.average_hour), 1, 10)) * 24) +
+                to_number(SubStr(To_Char(t.average_hour), 12, 2)) +
+                (to_number(SubStr(To_Char(t.average_hour), 15, 2)) / 60) average_hours,
+                
+                (to_number(SubStr(To_Char(t.on_hand_repair), 1, 10)) * 24) +
+                to_number(SubStr(To_Char(t.on_hand_repair), 12, 2)) +
+                (to_number(SubStr(To_Char(t.on_hand_repair), 15, 2)) / 60) on_hand_repairs,
+                
+                (to_number(SubStr(To_Char(t.time_to_repair), 1, 10)) * 24) +
+                to_number(SubStr(To_Char(t.time_to_repair), 12, 2)) +
+                (to_number(SubStr(To_Char(t.time_to_repair), 15, 2)) / 60) time_to_repairs
+                
+                FROM(
+                SELECT
+                a.*,
+                SubStr(a.min_job_date, 1, 8) start_repair,
+                SubStr(a.max_job_date, 1, 8) stop_repair,
+                To_Date(SubStr(max_job_date, 1, 8), 'yyyymmdd') - To_Date(SubStr(min_job_date, 1, 8), 'yyyymmdd') + 1 working_days,
+                SubStr(a.min_job_date, 9, 4) start_time,
+                SubStr(a.max_job_date, 13, 4) finish_time,
+                
+                ((to_timestamp(SubStr(a.min_job_date, 13, 4), 'HH24:MI')-to_timestamp(SubStr(a.min_job_date, 9, 4), 'HH24:MI'))+
+                (to_timestamp(SubStr(a.max_job_date, 13, 4), 'HH24:MI')-to_timestamp(SubStr(a.max_job_date, 9, 4), 'HH24:MI')))/2 average_hour,
+                
+                ((To_Date(SubStr(max_job_date, 1, 8), 'yyyymmdd') - To_Date(SubStr(min_job_date, 1, 8), 'yyyymmdd') + 1) *
+                (((to_timestamp(SubStr(a.min_job_date, 13, 4), 'HH24:MI')-to_timestamp(SubStr(a.min_job_date, 9, 4), 'HH24:MI'))+
+                (to_timestamp(SubStr(a.max_job_date, 13, 4), 'HH24:MI')-to_timestamp(SubStr(a.max_job_date, 9, 4), 'HH24:MI')))/2)) on_hand_repair,
+                
+                (to_timestamp(SubStr(a.max_job_date, 1, 8) || ' ' || SubStr(a.max_job_date, 13, 4), 'YYYYMMDD HH24:MI') -
+                to_timestamp(SubStr(a.min_job_date, 1, 8) || ' ' || SubStr(a.min_job_date, 9, 4), 'YYYYMMDD HH24:MI')) time_to_repair
+                FROM (
+                SELECT
+                a.dstrct_code,
+                a.work_order,
+                a.wo_desc,
+                a.wo_status_m,
+                c.plant_no,
+                a.work_group,
+                a.maint_type,
+                b.job_dur_date,
+                b.seq_no,
+                b.job_dur_start,
+                b.job_dur_finish,
+                b.job_dur_hours,
+                Row_Number() OVER (
+                    PARTITION BY 
+                    b.dstrct_code, b.work_order 
+                    ORDER BY 
+                    b.dstrct_code, b.work_order, b.job_dur_date, b.seq_no
+                ) rn,
+                Min(job_dur_date||job_dur_start||job_dur_finish) OVER (PARTITION BY b.dstrct_code, b.work_order) min_job_date,
+                Max(job_dur_date||job_dur_start||job_dur_finish) OVER (PARTITION BY b.dstrct_code, b.work_order) max_job_date
+                FROM
+                    ellipse.msf620 a,
+                    ellipse.msf622 b,
+                    ellipse.msf600 c
+                WHERE
+                    TRIM(a.work_group) LIKE 'TELECT' AND
+                    a.wo_status_m in ('C','O','A') AND
+                    a.equip_no = c.equip_no AND
+                    a.work_order = b.work_order AND
+                    a.dstrct_code = b.dstrct_code AND
+                    a.dstrct_code LIKE 'UPMT' AND
+                    a.raised_date BETWEEN '$thisyear+$start' AND '$thisyear$end'
+                ORDER BY
+                    a.work_order,
+                    b.job_dur_date,
+                    b.seq_no
+                ) a
+                ) t
+                
+                ORDER BY
+                t.work_order,
+                t.work_group"
+        );
+
+        $janhandonrepairs = 0;
+        $jantimeonrepairs = 0;
+        $janwrenchtime = 0;
+
+        $febhandonrepairs = 0;
+        $febtimeonrepairs = 0;
+        $febwrenchtime = 0;
+
+        $marhandonrepairs = 0;
+        $martimeonrepairs = 0;
+        $marwrenchtime = 0;
+
+        $aprhandonrepairs = 0;
+        $aprtimeonrepairs = 0;
+        $aprwrenchtime = 0;
+
+        $mayhandonrepairs = 0;
+        $maytimeonrepairs = 0;
+        $maywrenchtime = 0;
+
+        $junhandonrepairs = 0;
+        $juntimeonrepairs = 0;
+        $junwrenchtime = 0;
+
+        $julhandonrepairs = 0;
+        $jultimeonrepairs = 0;
+        $julwrenchtime = 0;
+
+        $aughandonrepairs = 0;
+        $augtimeonrepairs = 0;
+        $augwrenchtime = 0;
+
+        $sephandonrepairs = 0;
+        $septimeonrepairs = 0;
+        $sepwrenchtime = 0;
+
+        $octhandonrepairs = 0;
+        $octtimeonrepairs = 0;
+        $octwrenchtime = 0;
+
+        $novhandonrepairs = 0;
+        $novtimeonrepairs = 0;
+        $novwrenchtime = 0;
+
+        $deshandonrepairs = 0;
+        $destimeonrepairs = 0;
+        $deswrenchtime = 0;
 
         return view(
             'kpi/pmcompliancepdf',
@@ -1575,6 +1720,46 @@ class PDFCOntroller extends Controller
                 'reworknov' => $reworknov,
                 'reworkdes' => $reworkdes,
                 'totalreworkfix' => $totalreworkfix,
+
+                //Wrench Time
+                'getWrenchtime' => $getWrenchtime,
+                'thisyear' => $thisyear,
+                'janhandonrepairs' => $janhandonrepairs,
+                'jantimeonrepairs' => $jantimeonrepairs,
+                'janwrenchtime' => $janwrenchtime,
+                'febhandonrepairs' => $febhandonrepairs,
+                'febtimeonrepairs' => $febtimeonrepairs,
+                'febwrenchtime' => $febwrenchtime,
+                'marhandonrepairs' => $marhandonrepairs,
+                'martimeonrepairs' => $martimeonrepairs,
+                'marwrenchtime' => $marwrenchtime,
+                'aprhandonrepairs' => $aprhandonrepairs,
+                'aprtimeonrepairs' => $aprtimeonrepairs,
+                'aprwrenchtime' => $aprwrenchtime,
+                'mayhandonrepairs' => $mayhandonrepairs,
+                'maytimeonrepairs' => $maytimeonrepairs,
+                'maywrenchtime' => $maywrenchtime,
+                'junhandonrepairs' => $junhandonrepairs,
+                'juntimeonrepairs' => $juntimeonrepairs,
+                'junwrenchtime' => $junwrenchtime,
+                'julhandonrepairs' => $julhandonrepairs,
+                'jultimeonrepairs' => $jultimeonrepairs,
+                'julwrenchtime' => $julwrenchtime,
+                'aughandonrepairs' => $aughandonrepairs,
+                'augtimeonrepairs' => $augtimeonrepairs,
+                'augwrenchtime' => $augwrenchtime,
+                'sephandonrepairs' => $sephandonrepairs,
+                'septimeonrepairs' => $septimeonrepairs,
+                'sepwrenchtime' => $sepwrenchtime,
+                'octhandonrepairs' => $octhandonrepairs,
+                'octtimeonrepairs' => $octtimeonrepairs,
+                'octwrenchtime' => $octwrenchtime,
+                'novhandonrepairs' => $novhandonrepairs,
+                'novtimeonrepairs' => $novtimeonrepairs,
+                'novwrenchtime' => $novwrenchtime,
+                'deshandonrepairs' => $deshandonrepairs,
+                'destimeonrepairs' => $destimeonrepairs,
+                'deswrenchtime' => $deswrenchtime,
             ]
         );
     }
@@ -1620,6 +1805,9 @@ class PDFCOntroller extends Controller
 
         $option = 'TELECT';
         $namaunit = 'Listrik 1-2';
+
+        $parse = Carbon::parse('now');
+        $getMonth = $parse->month;
 
         $tablepmnotcomply = DB::table('msf620')
             ->join('msf623', 'msf623.work_order', '=', 'msf620.work_order')
@@ -1996,7 +2184,7 @@ class PDFCOntroller extends Controller
         // Total KPI Persen
         $totalkpi = ($pmcompliancejanfix + $pmcompliancefebfix + $pmcompliancemarfix + $pmcomplianceaprfix + $pmcompliancemayfix
             + $pmcompliancejunfix + $pmcompliancejulfix + $pmcomplianceaugfix + $pmcompliancesepfix + $pmcomplianceoctfix
-            + $pmcompliancenovfix + $pmcompliancedesfix) / 12;
+            + $pmcompliancenovfix + $pmcompliancedesfix) / $getMonth;
 
         $totalkpifix = number_format((float)$totalkpi, 2, '.', '');
 
@@ -2633,7 +2821,7 @@ class PDFCOntroller extends Controller
         // Total KPI Persen
         $totalreactivework = ($reactiveworkjanfix + $reactiveworkfebfix + $reactiveworkmarfix + $reactiveworkaprfix + $reactiveworkmayfix
             + $reactiveworkjunfix + $reactiveworkjulfix + $reactiveworkaugfix + $reactiveworksepfix + $reactiveworkoctfix
-            + $reactiveworknovfix + $reactiveworkdesfix) / 12;
+            + $reactiveworknovfix + $reactiveworkdesfix) / $getMonth;
 
         $totalreactiveworkfix = number_format((float)$totalreactivework, 2, '.', '');
 
@@ -2995,8 +3183,150 @@ class PDFCOntroller extends Controller
             $rasioreworkfixapr + $rasioreworkfixmay + $rasioreworkfixjun +
             $rasioreworkfixjul + $rasioreworkfixaug + $rasioreworkfixsep +
             $rasioreworkfixoct + $rasioreworkfixnov + $rasioreworkfixdes
-        ) / 12;
+        ) / $getMonth;
         $totalreworkfix = number_format((float)$totalrework, 2, '.', '');
+
+        $namaunit = 'Listrik 1-2';
+        $thisyear = Carbon::now()->format('Y');
+        $option = 'TELECT';
+        $start = 0101;
+        $end = 1231;
+        $getWrenchtime = DB::connection('oracle')->select(
+            "SELECT DISTINCT
+                t.work_order wo_number,
+                t.plant_no plant_no,
+                t.wo_desc description_wo,
+                t.work_group work_group_header,
+                t.wo_status_m wo_status,
+                t.maint_type mt_type,
+                t.start_repair start_repair_date,
+                t.start_time start_repair_time,
+                t.stop_repair stop_repair_date,
+                t.finish_time stop_repair_time,
+                t.working_days,
+                (to_number(SubStr(To_Char(t.average_hour), 1, 10)) * 24) +
+                to_number(SubStr(To_Char(t.average_hour), 12, 2)) +
+                (to_number(SubStr(To_Char(t.average_hour), 15, 2)) / 60) average_hours,
+                
+                (to_number(SubStr(To_Char(t.on_hand_repair), 1, 10)) * 24) +
+                to_number(SubStr(To_Char(t.on_hand_repair), 12, 2)) +
+                (to_number(SubStr(To_Char(t.on_hand_repair), 15, 2)) / 60) on_hand_repairs,
+                
+                (to_number(SubStr(To_Char(t.time_to_repair), 1, 10)) * 24) +
+                to_number(SubStr(To_Char(t.time_to_repair), 12, 2)) +
+                (to_number(SubStr(To_Char(t.time_to_repair), 15, 2)) / 60) time_to_repairs
+                
+                FROM(
+                SELECT
+                a.*,
+                SubStr(a.min_job_date, 1, 8) start_repair,
+                SubStr(a.max_job_date, 1, 8) stop_repair,
+                To_Date(SubStr(max_job_date, 1, 8), 'yyyymmdd') - To_Date(SubStr(min_job_date, 1, 8), 'yyyymmdd') + 1 working_days,
+                SubStr(a.min_job_date, 9, 4) start_time,
+                SubStr(a.max_job_date, 13, 4) finish_time,
+                
+                ((to_timestamp(SubStr(a.min_job_date, 13, 4), 'HH24:MI')-to_timestamp(SubStr(a.min_job_date, 9, 4), 'HH24:MI'))+
+                (to_timestamp(SubStr(a.max_job_date, 13, 4), 'HH24:MI')-to_timestamp(SubStr(a.max_job_date, 9, 4), 'HH24:MI')))/2 average_hour,
+                
+                ((To_Date(SubStr(max_job_date, 1, 8), 'yyyymmdd') - To_Date(SubStr(min_job_date, 1, 8), 'yyyymmdd') + 1) *
+                (((to_timestamp(SubStr(a.min_job_date, 13, 4), 'HH24:MI')-to_timestamp(SubStr(a.min_job_date, 9, 4), 'HH24:MI'))+
+                (to_timestamp(SubStr(a.max_job_date, 13, 4), 'HH24:MI')-to_timestamp(SubStr(a.max_job_date, 9, 4), 'HH24:MI')))/2)) on_hand_repair,
+                
+                (to_timestamp(SubStr(a.max_job_date, 1, 8) || ' ' || SubStr(a.max_job_date, 13, 4), 'YYYYMMDD HH24:MI') -
+                to_timestamp(SubStr(a.min_job_date, 1, 8) || ' ' || SubStr(a.min_job_date, 9, 4), 'YYYYMMDD HH24:MI')) time_to_repair
+                FROM (
+                SELECT
+                a.dstrct_code,
+                a.work_order,
+                a.wo_desc,
+                a.wo_status_m,
+                c.plant_no,
+                a.work_group,
+                a.maint_type,
+                b.job_dur_date,
+                b.seq_no,
+                b.job_dur_start,
+                b.job_dur_finish,
+                b.job_dur_hours,
+                Row_Number() OVER (
+                    PARTITION BY 
+                    b.dstrct_code, b.work_order 
+                    ORDER BY 
+                    b.dstrct_code, b.work_order, b.job_dur_date, b.seq_no
+                ) rn,
+                Min(job_dur_date||job_dur_start||job_dur_finish) OVER (PARTITION BY b.dstrct_code, b.work_order) min_job_date,
+                Max(job_dur_date||job_dur_start||job_dur_finish) OVER (PARTITION BY b.dstrct_code, b.work_order) max_job_date
+                FROM
+                    ellipse.msf620 a,
+                    ellipse.msf622 b,
+                    ellipse.msf600 c
+                WHERE
+                    TRIM(a.work_group) LIKE 'TELECT' AND
+                    a.wo_status_m in ('C','O','A') AND
+                    a.equip_no = c.equip_no AND
+                    a.work_order = b.work_order AND
+                    a.dstrct_code = b.dstrct_code AND
+                    a.dstrct_code LIKE 'UPMT' AND
+                    a.raised_date BETWEEN '$thisyear+$start' AND '$thisyear$end'
+                ORDER BY
+                    a.work_order,
+                    b.job_dur_date,
+                    b.seq_no
+                ) a
+                ) t
+                
+                ORDER BY
+                t.work_order,
+                t.work_group"
+        );
+
+        $janhandonrepairs = 0;
+        $jantimeonrepairs = 0;
+        $janwrenchtime = 0;
+
+        $febhandonrepairs = 0;
+        $febtimeonrepairs = 0;
+        $febwrenchtime = 0;
+
+        $marhandonrepairs = 0;
+        $martimeonrepairs = 0;
+        $marwrenchtime = 0;
+
+        $aprhandonrepairs = 0;
+        $aprtimeonrepairs = 0;
+        $aprwrenchtime = 0;
+
+        $mayhandonrepairs = 0;
+        $maytimeonrepairs = 0;
+        $maywrenchtime = 0;
+
+        $junhandonrepairs = 0;
+        $juntimeonrepairs = 0;
+        $junwrenchtime = 0;
+
+        $julhandonrepairs = 0;
+        $jultimeonrepairs = 0;
+        $julwrenchtime = 0;
+
+        $aughandonrepairs = 0;
+        $augtimeonrepairs = 0;
+        $augwrenchtime = 0;
+
+        $sephandonrepairs = 0;
+        $septimeonrepairs = 0;
+        $sepwrenchtime = 0;
+
+        $octhandonrepairs = 0;
+        $octtimeonrepairs = 0;
+        $octwrenchtime = 0;
+
+        $novhandonrepairs = 0;
+        $novtimeonrepairs = 0;
+        $novwrenchtime = 0;
+
+        $deshandonrepairs = 0;
+        $destimeonrepairs = 0;
+        $deswrenchtime = 0;
 
         $data = [
             'thisyear' => $thisyear,
@@ -3143,12 +3473,52 @@ class PDFCOntroller extends Controller
             'reworknov' => $reworknov,
             'reworkdes' => $reworkdes,
             'totalreworkfix' => $totalreworkfix,
+
+            // WrenchTime
+            'getWrenchtime' => $getWrenchtime,
+            'thisyear' => $thisyear,
+            'janhandonrepairs' => $janhandonrepairs,
+            'jantimeonrepairs' => $jantimeonrepairs,
+            'janwrenchtime' => $janwrenchtime,
+            'febhandonrepairs' => $febhandonrepairs,
+            'febtimeonrepairs' => $febtimeonrepairs,
+            'febwrenchtime' => $febwrenchtime,
+            'marhandonrepairs' => $marhandonrepairs,
+            'martimeonrepairs' => $martimeonrepairs,
+            'marwrenchtime' => $marwrenchtime,
+            'aprhandonrepairs' => $aprhandonrepairs,
+            'aprtimeonrepairs' => $aprtimeonrepairs,
+            'aprwrenchtime' => $aprwrenchtime,
+            'mayhandonrepairs' => $mayhandonrepairs,
+            'maytimeonrepairs' => $maytimeonrepairs,
+            'maywrenchtime' => $maywrenchtime,
+            'junhandonrepairs' => $junhandonrepairs,
+            'juntimeonrepairs' => $juntimeonrepairs,
+            'junwrenchtime' => $junwrenchtime,
+            'julhandonrepairs' => $julhandonrepairs,
+            'jultimeonrepairs' => $jultimeonrepairs,
+            'julwrenchtime' => $julwrenchtime,
+            'aughandonrepairs' => $aughandonrepairs,
+            'augtimeonrepairs' => $augtimeonrepairs,
+            'augwrenchtime' => $augwrenchtime,
+            'sephandonrepairs' => $sephandonrepairs,
+            'septimeonrepairs' => $septimeonrepairs,
+            'sepwrenchtime' => $sepwrenchtime,
+            'octhandonrepairs' => $octhandonrepairs,
+            'octtimeonrepairs' => $octtimeonrepairs,
+            'octwrenchtime' => $octwrenchtime,
+            'novhandonrepairs' => $novhandonrepairs,
+            'novtimeonrepairs' => $novtimeonrepairs,
+            'novwrenchtime' => $novwrenchtime,
+            'deshandonrepairs' => $deshandonrepairs,
+            'destimeonrepairs' => $destimeonrepairs,
+            'deswrenchtime' => $deswrenchtime,
         ];
 
         $now = Carbon::now()->format('Y m d');
         $pdf = PDF::loadview('kpi.pmcompliancepdf', $data);
         $pdf->set_paper('A4', 'landscape');
-        return $pdf->stream('PM Compliance' . ' ' . $namaunit . ' ' . $now . '.pdf');
+        return $pdf->stream('Report Summary KPI' . ' ' . $namaunit . ' ' . $now . '.pdf');
     }
 
     public function PMCompliancePrintIndexListrik34()
@@ -4762,6 +5132,8 @@ class PDFCOntroller extends Controller
 
         $option = 'TELECT3';
         $namaunit = 'Listrik 3-4';
+        $parse = Carbon::parse('now');
+        $getMonth = $parse->month;
 
         $tablepmnotcomply = DB::table('msf620')
             ->join('msf623', 'msf623.work_order', '=', 'msf620.work_order')
@@ -5138,7 +5510,7 @@ class PDFCOntroller extends Controller
         // Total KPI Persen
         $totalkpi = ($pmcompliancejanfix + $pmcompliancefebfix + $pmcompliancemarfix + $pmcomplianceaprfix + $pmcompliancemayfix
             + $pmcompliancejunfix + $pmcompliancejulfix + $pmcomplianceaugfix + $pmcompliancesepfix + $pmcomplianceoctfix
-            + $pmcompliancenovfix + $pmcompliancedesfix) / 12;
+            + $pmcompliancenovfix + $pmcompliancedesfix) / $getMonth;
 
         $totalkpifix = number_format((float)$totalkpi, 2, '.', '');
 
@@ -5775,7 +6147,7 @@ class PDFCOntroller extends Controller
         // Total KPI Persen
         $totalreactivework = ($reactiveworkjanfix + $reactiveworkfebfix + $reactiveworkmarfix + $reactiveworkaprfix + $reactiveworkmayfix
             + $reactiveworkjunfix + $reactiveworkjulfix + $reactiveworkaugfix + $reactiveworksepfix + $reactiveworkoctfix
-            + $reactiveworknovfix + $reactiveworkdesfix) / 12;
+            + $reactiveworknovfix + $reactiveworkdesfix) / $getMonth;
 
         $totalreactiveworkfix = number_format((float)$totalreactivework, 2, '.', '');
 
@@ -6137,7 +6509,7 @@ class PDFCOntroller extends Controller
             $rasioreworkfixapr + $rasioreworkfixmay + $rasioreworkfixjun +
             $rasioreworkfixjul + $rasioreworkfixaug + $rasioreworkfixsep +
             $rasioreworkfixoct + $rasioreworkfixnov + $rasioreworkfixdes
-        ) / 12;
+        ) / $getMonth;
         $totalreworkfix = number_format((float)$totalrework, 2, '.', '');
 
         $data = [
@@ -7906,6 +8278,9 @@ class PDFCOntroller extends Controller
         $option = 'TMECH';
         $namaunit = 'Mekanik 1-2';
 
+        $parse = Carbon::parse('now');
+        $getMonth = $parse->month;
+
         $tablepmnotcomply = DB::table('msf620')
             ->join('msf623', 'msf623.work_order', '=', 'msf620.work_order')
             ->where([
@@ -8281,7 +8656,7 @@ class PDFCOntroller extends Controller
         // Total KPI Persen
         $totalkpi = ($pmcompliancejanfix + $pmcompliancefebfix + $pmcompliancemarfix + $pmcomplianceaprfix + $pmcompliancemayfix
             + $pmcompliancejunfix + $pmcompliancejulfix + $pmcomplianceaugfix + $pmcompliancesepfix + $pmcomplianceoctfix
-            + $pmcompliancenovfix + $pmcompliancedesfix) / 12;
+            + $pmcompliancenovfix + $pmcompliancedesfix) / $getMonth;
 
         $totalkpifix = number_format((float)$totalkpi, 2, '.', '');
 
@@ -8918,7 +9293,7 @@ class PDFCOntroller extends Controller
         // Total KPI Persen
         $totalreactivework = ($reactiveworkjanfix + $reactiveworkfebfix + $reactiveworkmarfix + $reactiveworkaprfix + $reactiveworkmayfix
             + $reactiveworkjunfix + $reactiveworkjulfix + $reactiveworkaugfix + $reactiveworksepfix + $reactiveworkoctfix
-            + $reactiveworknovfix + $reactiveworkdesfix) / 12;
+            + $reactiveworknovfix + $reactiveworkdesfix) / $getMonth;
 
         $totalreactiveworkfix = number_format((float)$totalreactivework, 2, '.', '');
 
@@ -9280,7 +9655,7 @@ class PDFCOntroller extends Controller
             $rasioreworkfixapr + $rasioreworkfixmay + $rasioreworkfixjun +
             $rasioreworkfixjul + $rasioreworkfixaug + $rasioreworkfixsep +
             $rasioreworkfixoct + $rasioreworkfixnov + $rasioreworkfixdes
-        ) / 12;
+        ) / $getMonth;
         $totalreworkfix = number_format((float)$totalrework, 2, '.', '');
 
         $data = [
@@ -10928,6 +11303,9 @@ class PDFCOntroller extends Controller
         $option = 'TMECH34';
         $namaunit = 'Mekanik 3-4';
 
+        $parse = Carbon::parse('now');
+        $getMonth = $parse->month;
+
         $jumlahwopmjan = DB::table('msf620')
             ->join('msf623', 'msf623.work_order', '=', 'msf620.work_order')
             ->where([
@@ -11279,7 +11657,7 @@ class PDFCOntroller extends Controller
         // Total KPI Persen
         $totalkpi = ($pmcompliancejanfix + $pmcompliancefebfix + $pmcompliancemarfix + $pmcomplianceaprfix + $pmcompliancemayfix
             + $pmcompliancejunfix + $pmcompliancejulfix + $pmcomplianceaugfix + $pmcompliancesepfix + $pmcomplianceoctfix
-            + $pmcompliancenovfix + $pmcompliancedesfix) / 12;
+            + $pmcompliancenovfix + $pmcompliancedesfix) / $getMonth;
 
         $totalkpifix = number_format((float)$totalkpi, 2, '.', '');
 
@@ -11899,7 +12277,7 @@ class PDFCOntroller extends Controller
         // Total KPI Persen
         $totalreactivework = ($reactiveworkjanfix + $reactiveworkfebfix + $reactiveworkmarfix + $reactiveworkaprfix + $reactiveworkmayfix
             + $reactiveworkjunfix + $reactiveworkjulfix + $reactiveworkaugfix + $reactiveworksepfix + $reactiveworkoctfix
-            + $reactiveworknovfix + $reactiveworkdesfix) / 12;
+            + $reactiveworknovfix + $reactiveworkdesfix) / $getMonth;
 
         $totalreactiveworkfix = number_format((float)$totalreactivework, 2, '.', '');
 
@@ -12238,7 +12616,7 @@ class PDFCOntroller extends Controller
             $rasioreworkfixapr + $rasioreworkfixmay + $rasioreworkfixjun +
             $rasioreworkfixjul + $rasioreworkfixaug + $rasioreworkfixsep +
             $rasioreworkfixoct + $rasioreworkfixnov + $rasioreworkfixdes
-        ) / 12;
+        ) / $getMonth;
         $totalreworkfix = number_format((float)$totalrework, 2, '.', '');
 
         $data = [
@@ -12402,6 +12780,9 @@ class PDFCOntroller extends Controller
 
         $option = 'TINST';
         $namaunit = 'Instrument 1-2';
+
+        $parse = Carbon::parse('now');
+        $getMonth = $parse->month;
 
         $jumlahwopmjan = DB::table('msf620')
             ->join('msf623', 'msf623.work_order', '=', 'msf620.work_order')
@@ -12754,7 +13135,7 @@ class PDFCOntroller extends Controller
         // Total KPI Persen
         $totalkpi = ($pmcompliancejanfix + $pmcompliancefebfix + $pmcompliancemarfix + $pmcomplianceaprfix + $pmcompliancemayfix
             + $pmcompliancejunfix + $pmcompliancejulfix + $pmcomplianceaugfix + $pmcompliancesepfix + $pmcomplianceoctfix
-            + $pmcompliancenovfix + $pmcompliancedesfix) / 12;
+            + $pmcompliancenovfix + $pmcompliancedesfix) / $getMonth;
 
         $totalkpifix = number_format((float)$totalkpi, 2, '.', '');
 
@@ -13375,7 +13756,7 @@ class PDFCOntroller extends Controller
         // Total KPI Persen
         $totalreactivework = ($reactiveworkjanfix + $reactiveworkfebfix + $reactiveworkmarfix + $reactiveworkaprfix + $reactiveworkmayfix
             + $reactiveworkjunfix + $reactiveworkjulfix + $reactiveworkaugfix + $reactiveworksepfix + $reactiveworkoctfix
-            + $reactiveworknovfix + $reactiveworkdesfix) / 12;
+            + $reactiveworknovfix + $reactiveworkdesfix) / $getMonth;
 
         $totalreactiveworkfix = number_format((float)$totalreactivework, 2, '.', '');
 
@@ -13714,7 +14095,7 @@ class PDFCOntroller extends Controller
             $rasioreworkfixapr + $rasioreworkfixmay + $rasioreworkfixjun +
             $rasioreworkfixjul + $rasioreworkfixaug + $rasioreworkfixsep +
             $rasioreworkfixoct + $rasioreworkfixnov + $rasioreworkfixdes
-        ) / 12;
+        ) / $getMonth;
         $totalreworkfix = number_format((float)$totalrework, 2, '.', '');
 
         return view('kpi.pmcompliancepdftins12', [
@@ -13873,6 +14254,9 @@ class PDFCOntroller extends Controller
 
         $option = 'TINST';
         $namaunit = 'Instrument 1-2';
+
+        $parse = Carbon::parse('now');
+        $getMonth = $parse->month;
 
         $jumlahwopmjan = DB::table('msf620')
             ->join('msf623', 'msf623.work_order', '=', 'msf620.work_order')
@@ -14225,7 +14609,7 @@ class PDFCOntroller extends Controller
         // Total KPI Persen
         $totalkpi = ($pmcompliancejanfix + $pmcompliancefebfix + $pmcompliancemarfix + $pmcomplianceaprfix + $pmcompliancemayfix
             + $pmcompliancejunfix + $pmcompliancejulfix + $pmcomplianceaugfix + $pmcompliancesepfix + $pmcomplianceoctfix
-            + $pmcompliancenovfix + $pmcompliancedesfix) / 12;
+            + $pmcompliancenovfix + $pmcompliancedesfix) / $getMonth;
 
         $totalkpifix = number_format((float)$totalkpi, 2, '.', '');
 
@@ -14845,7 +15229,7 @@ class PDFCOntroller extends Controller
         // Total KPI Persen
         $totalreactivework = ($reactiveworkjanfix + $reactiveworkfebfix + $reactiveworkmarfix + $reactiveworkaprfix + $reactiveworkmayfix
             + $reactiveworkjunfix + $reactiveworkjulfix + $reactiveworkaugfix + $reactiveworksepfix + $reactiveworkoctfix
-            + $reactiveworknovfix + $reactiveworkdesfix) / 12;
+            + $reactiveworknovfix + $reactiveworkdesfix) / $getMonth;
 
         $totalreactiveworkfix = number_format((float)$totalreactivework, 2, '.', '');
 
@@ -15184,7 +15568,7 @@ class PDFCOntroller extends Controller
             $rasioreworkfixapr + $rasioreworkfixmay + $rasioreworkfixjun +
             $rasioreworkfixjul + $rasioreworkfixaug + $rasioreworkfixsep +
             $rasioreworkfixoct + $rasioreworkfixnov + $rasioreworkfixdes
-        ) / 12;
+        ) / $getMonth;
         $totalreworkfix = number_format((float)$totalrework, 2, '.', '');
 
         $data = [
@@ -16820,6 +17204,9 @@ class PDFCOntroller extends Controller
         $option = 'TINST34';
         $namaunit = 'Instrument 3-4';
 
+        $parse = Carbon::parse('now');
+        $getMonth = $parse->month;
+
         $jumlahwopmjan = DB::table('msf620')
             ->join('msf623', 'msf623.work_order', '=', 'msf620.work_order')
             ->where([
@@ -17171,7 +17558,7 @@ class PDFCOntroller extends Controller
         // Total KPI Persen
         $totalkpi = ($pmcompliancejanfix + $pmcompliancefebfix + $pmcompliancemarfix + $pmcomplianceaprfix + $pmcompliancemayfix
             + $pmcompliancejunfix + $pmcompliancejulfix + $pmcomplianceaugfix + $pmcompliancesepfix + $pmcomplianceoctfix
-            + $pmcompliancenovfix + $pmcompliancedesfix) / 12;
+            + $pmcompliancenovfix + $pmcompliancedesfix) / $getMonth;
 
         $totalkpifix = number_format((float)$totalkpi, 2, '.', '');
 
@@ -17791,7 +18178,7 @@ class PDFCOntroller extends Controller
         // Total KPI Persen
         $totalreactivework = ($reactiveworkjanfix + $reactiveworkfebfix + $reactiveworkmarfix + $reactiveworkaprfix + $reactiveworkmayfix
             + $reactiveworkjunfix + $reactiveworkjulfix + $reactiveworkaugfix + $reactiveworksepfix + $reactiveworkoctfix
-            + $reactiveworknovfix + $reactiveworkdesfix) / 12;
+            + $reactiveworknovfix + $reactiveworkdesfix) / $getMonth;
 
         $totalreactiveworkfix = number_format((float)$totalreactivework, 2, '.', '');
 
@@ -18130,7 +18517,7 @@ class PDFCOntroller extends Controller
             $rasioreworkfixapr + $rasioreworkfixmay + $rasioreworkfixjun +
             $rasioreworkfixjul + $rasioreworkfixaug + $rasioreworkfixsep +
             $rasioreworkfixoct + $rasioreworkfixnov + $rasioreworkfixdes
-        ) / 12;
+        ) / $getMonth;
         $totalreworkfix = number_format((float)$totalrework, 2, '.', '');
 
         $data = [
