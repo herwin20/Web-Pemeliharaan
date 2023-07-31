@@ -160,4 +160,5 @@ Route::controller(PDFCOntroller::class)->group(function () {
 
 Route::controller(FeedbackController::class)->group(function () {
     Route::get('feedback', 'index')->middleware('auth');
+    Route::get('testpage', 'testpage')->middleware('auth');
 });

@@ -380,6 +380,20 @@
                     </ul>
                 </li>
 
+                <li class="menu-item">
+                    <a href="javascript:void(0);" class="menu-link menu-toggle">
+                        <i class="menu-icon tf-icons bx bx-detail"></i>
+                        <div data-i18n="Form Elements">Test Page</div>
+                    </a>
+                    <ul class="menu-sub">
+                        <li class="menu-item">
+                            <a href="{{ asset('/testpage') }}" class="menu-link">
+                                <div data-i18n="Basic Inputs">Test Ellipse</div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
                 <!-- Misc 
                 <li class="menu-header small text-uppercase"><span class="menu-header-text">Other Feature</span></li>
                 <li class="menu-item">
